@@ -1,11 +1,11 @@
 # Progress audit versus the working roadmap
 
-**Date:** 15 Sep 2026  
+**Date:** 16 Sep 2026  
 **Roadmap:** `paper/working_roadmap.md`  
 **Background plan:** `paper/publishing_audit_and_roadmap.md` (13 Sep; still the venue/novelty strategy)  
 **Paper walkthrough:** `paper/walkthrough_notes.md` (explains the *old* S1-only draft)
 
-This file is the status snapshot after Phase A–D through Step 10 (C-weighting). It is not a substitute for the original publishing audit.
+This file is the status snapshot after Phase E Step 11 (version-C rewrite of `main.tex`). It is not a substitute for the original publishing audit.
 
 **How this file is kept:** after every stretch, update *this* file before calling the step done, then commit it with the code/results and push `main`.
 
@@ -26,7 +26,7 @@ S1 loses at matched LUFS (+1.17 dB); S2 reverses the sign (−0.27 dB, bootstrap
 
 S1 remains the failed heuristic on purpose. S2 knobs are frozen (`sub_atten_db=0`, `harmonic_mix=0`, `mid_target_dba=72`).
 
-**Paper vs data:** figures and `perclip_table.tex` show S1 and S2. `main.tex` is still mostly the S1-only draft, plus a Step 10 C-weighting Results paragraph that also reports S2 \(\Delta L_{Ceq}\). The full version-C rewrite is Step 11.
+**Paper vs data:** `main.tex` is version C: S0/S1/S2 methods, S1 +1.17\,dB failure kept, S2 grouped bars and stats, C-weighting paragraph, modest-margin language. Title is *Metric-Aligned Frequency Allocation for Personal-Audio Dose Limiting*; the abstract keeps S1's failure. PDF compile and claim search are Step 12.
 
 **Git:** https://github.com/Bhavya-Shri/ES_Research_Paper.git — branch `main`. This file is updated after every stretch and pushed with that stretch.
 
@@ -40,15 +40,15 @@ S1 remains the failed heuristic on purpose. S2 knobs are frozen (`sub_atten_db=0
 | 1 \(W_A/W_K\) figure | B | **Done** | `exposure_dsp/kweighting.py`; `paper/figures/weighting_ratio.png`; A@40 Hz ≈ −34.5 dB, K@40 Hz ≈ −5.6 dB |
 | 2 Stats on S1 | B | **Done** | `results/tables/stats_s1.json`; n=20 mean +1.17 dB, CI [0.60, 1.83], two-sided \(p=3.9\times10^{-4}\) |
 | 3 Citations | B | **Done** | Chen et al. 2023 (not “Liang”), US 9980028, US 6826515, Fathima 2026 in `references.bib` and §2 |
-| 4 Retitle | B | **Done** (may retitle again in Step 11) | *Metric Mismatch in Frequency-Selective Personal-Audio Limiting: A-Weighting versus BS.1770* |
+| 4 Retitle | B | **Done** (retitled again in Step 11) | *Metric-Aligned Frequency Allocation for Personal-Audio Dose Limiting* |
 | 5 S2 config | C | **Done** | `ProposedConfig.aligned()`; S1 defaults unchanged |
 | 6 Experiment S1+S2 | C | **Done** | `results/tables/comparison.csv`, `comparison_s1_s2.csv`; S1 mean still +1.174 dB vs frozen |
 | 7 Sign gate | C | **Done** | Reversal; S2 knobs frozen; story recorded in `working_roadmap.md` |
 | 8 Three-way figures | C | **Done** | `paper/figures/matched_loudness_s1_s2.png`; `perclip_table.tex` means +1.17 / −0.27 dB |
 | 9 Stats S2 | C | **Done** (required part ran with Step 7) | `results/tables/stats_s2.json`; CI excludes 0. Optional paired S1 vs S2 test **not** implemented |
 | **10 C-weighting** | **D** | **Done** | `exposure_dsp/cweighting.py`; `stats_cweight.json`; S1 ΔLCeq −0.58 dB, S2 +0.06 dB; both hypotheses held |
-| 11 Rewrite `main.tex` | E | **Next** | still mostly S1-only; C paragraph is in |
-| 12 Compile / claim check | E | Not started | |
+| **11 Rewrite `main.tex`** | **E** | **Done** | version C; S0/S1/S2; S2 figure; C paragraph; modest margin |
+| 12 Compile / claim check | E | **Next** | |
 | 13 IEEE Xplore + AES close-out | F | Not started | web/patent pass only |
 | 14 Venue + submit | F | Not started | |
 
@@ -118,18 +118,17 @@ S1 16-real \(\Delta L_{Ceq}\) −0.40 dB; S2 16-real +0.08 dB. Lesson: allocatio
 
 ### 2.5 What the paper file currently contains
 
-Already in `main.tex` from Phase B:
+`main.tex` is version C (Step 11):
 
-- Mismatch title and honest S1 abstract (+1.17 dB, hypothesis not supported).
-- Intro/related-work distinction: standard silent ≠ no algorithms.
-- Gap-table rows for Chen 2023, the two patents, Fathima 2026.
-- \(W_A/W_K\) figure next to the A-weighting check figure.
-- S1 Wilcoxon/CI sentence.
-- Step 10: one Results paragraph on C-weighting (S1 and S2 \(\Delta L_{Ceq}\)).
+- Title *Metric-Aligned Frequency Allocation for Personal-Audio Dose Limiting*; abstract keeps S1 +1.17\,dB failure and the modest S2 reversal.
+- Intro contribution: matched test; S1 fails; allocation follows \(w_A\); S2 reversed the sign.
+- Related work unchanged in neighbours (Chen 2023, patents, Fathima); gap table is S0/S1/S2.
+- Methods: S0, S1, S2 as one architecture / two configs; \(W_A/W_K\) in the method; param table has both columns.
+- Results: S1 figure kept; S2 grouped bars (`matched_loudness_s1_s2.png`); four-column `perclip_table.tex`; C-weighting; S1 ablation labelled as S1-only.
+- Limitations: digital proxy; mid cut may hurt speech; no MUSHRA; modest S2 margin.
+- Conclusion: design rule, not a new limiter.
 
-**Missing from `main.tex`:** three-system methods, S2 grouped-bar figure, version-C title/contribution bullets, wiring of `matched_loudness_s1_s2.png` / the four-column `perclip_table.tex`. The C paragraph mentions S2 numbers ahead of the full rewrite.
-
-`paper/Frequency_Adaptive_Audio_Limiting.pdf` is still on GitHub (old filename). Do not treat it as the current paper; the live source is `main.tex`.
+**Missing until Step 12:** compiled PDF whose claims match this tex. `paper/Frequency_Adaptive_Audio_Limiting.pdf` is still the old filename on GitHub.
 
 ### 2.6 Artifacts that exist (Steps 0–10)
 
@@ -162,18 +161,11 @@ Already in `main.tex` from Phase B:
 
 Do these **in roadmap order**. Do not retune mid target 72 after seeing \(\Delta\). After each step, update this file and push.
 
-### Immediate — Step 11 (next coding stretch)
+### Immediate — Step 12 (next stretch)
 
-Rewrite `main.tex` toward version C: S0/S1/S2 methods, keep the +1.17 dB S1 story, add S2 figure/stats, keep the C-weighting paragraph, modest-margin language. Do not retune knobs.
+Compile IEEEtran (`pdflatex` / Overleaf). Search the PDF for SPL, hearing loss, quality, novel architecture, optimal, adaptive. Qualify or delete each hit. Every number must match `results/tables/`.
 
-1. Title may become *Metric-Aligned Frequency Allocation for Personal-Audio Dose Limiting* (roadmap §3.1 option 3), or keep the mismatch title and add S2 in the abstract.
-2. Intro: matched test; S1 fails; allocation follows \(w_A\); S2 reversed the sign.
-3. Methods: define S0, S1, S2; S2 is a config.
-4. Results: keep the +1.17 dB S1 story; add S2 figure/stats; say the margin is modest.
-5. Limitations: still a digital proxy; mid cut may hurt speech; no MUSHRA.
-6. Every number from `results/tables/`. Compile; search for SPL / hearing loss / quality / novel architecture / optimal / adaptive.
-
-### Then — Steps 12–14 (compile and submit)
+### Then — Steps 13–14 (submit)
 
 IEEE Xplore + AES neighbour search; pick a conference/AES venue (reversal story is clean enough). Do **not** wait for a coupler or listening test for the first submission.
 
@@ -194,7 +186,7 @@ IEEE Xplore + AES neighbour search; pick a conference/AES venue (reversal story 
 | Risk | How it stands now |
 |---|---|
 | Overselling S2 | −0.27 dB is a real sign flip (CI excludes 0), not a large safety gain. Write it as alignment, not as a new limiter. |
-| Title still sounds like a winning product | Current mismatch title is safer until Step 11; if retitled to “metric-aligned,” the abstract must keep S1’s failure. |
+| Title still sounds like a winning product | Version-C title is metric-aligned; the abstract still leads with S1’s +1.17\,dB failure. |
 | Ablation not refreshed | Frozen S1 ablation is fine; do not imply S2 was ablated band-by-band unless you re-run it. |
 | Chen vs “Liang 2023” | The IJERPH paper is Chen, Xue, Wang, Cai, Zhu (2023). Cite `Chen2023`. |
 | Quality / SPL language | Still forbidden. Digital \(L_{Aeq}\) proxy only. |
@@ -221,4 +213,4 @@ S1 freeze (do not overwrite as the source of truth): `results/frozen/draft-negat
 
 ## 7. Next action
 
-**Step 11.** When you say go: rewrite `main.tex` to version C (S0/S1/S2, reversal, C-weighting already drafted). Every number from `results/tables/`. Do not retune knobs. Update this file after that pass.
+**Step 12.** When you say go: compile the IEEEtran PDF and run the claim search (SPL / hearing loss / quality / novel architecture / optimal / adaptive). Update this file after that pass. Do not retune knobs.

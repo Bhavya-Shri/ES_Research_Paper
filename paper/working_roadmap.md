@@ -174,7 +174,7 @@ Wilcoxon/CI for S2 deltas; optional paired S1 vs S2.
 
 ## Phase E — Rewrite the paper to match the data
 
-### Step 11 — `main.tex` structure for version C  ← **NEXT**
+### Step 11 — `main.tex` structure for version C
 
 1. Intro contribution: matched test; S1 fails; allocation must follow \(w_A\); S2 {did / did not} reverse the sign.  
 2. Related work: patents + Liang (Step 3).  
@@ -186,7 +186,9 @@ Wilcoxon/CI for S2 deltas; optional paired S1 vs S2.
 
 **Done when:** every number in the PDF is generated from `results/tables/`. No leftover “loudness preservation succeeded” language.
 
-### Step 12 — Compile and consistency pass
+**Status:** done. Title *Metric-Aligned Frequency Allocation for Personal-Audio Dose Limiting*; abstract keeps S1 failure. S0/S1/S2 methods; `matched_loudness_s1_s2.png` and `perclip_table.tex` wired; C-weighting kept; S2 margin called modest. Compile/claim search is Step 12.
+
+### Step 12 — Compile and consistency pass  ← **NEXT**
 
 - `pdflatex` / Overleaf IEEEtran.
 - Search PDF for: SPL, hearing loss, quality, novel architecture, optimal, adaptive.
@@ -234,16 +236,16 @@ Those are a **second** paper or a journal extension.
 | 1 Weighting-ratio figure | **Done** (`paper/figures/weighting_ratio.png`; A@40 Hz = −34.5 dB, K@40 Hz = −5.6 dB) |
 | 2 Stats on S1 | **Done** (`results/tables/stats_s1.json`; n=20 mean +1.17 dB, two-sided p=3.9e-4) |
 | 3 Citations | **Done** (Chen 2023, US 9980028, US 6826515, Fathima 2026) |
-| 4 Retitle | **Done** (*Metric Mismatch ... A-Weighting versus BS.1770*) |
+| 4 Retitle | **Done** (*Metric-Aligned Frequency Allocation for Personal-Audio Dose Limiting*) |
 | 5 S2 config | **Done** (`ProposedConfig.aligned()`: shelf 0 dB, mix 0, mid target 72) |
 | 6 Experiment S1+S2 | **Done** (`comparison_s1_s2.csv`; S1 +1.17 dB, S2 −0.27 dB) |
 | 7 Sign gate | **Done** — reversal; S2 knobs frozen at mid target 72 |
 | 8 Figures | **Done** (`matched_loudness_s1_s2.png`; `perclip_table.tex` S1+S2) |
 | 9 Stats S2 | **Done** (`stats_s2.json`; CI excludes 0) |
 | 10 C-weighting | **Done** (`stats_cweight.json`; S1 −0.58 dB, S2 +0.06 dB) |
-| 11 Rewrite tex | **Next** |
-| 12 Compile pass | Not started |
+| 11 Rewrite tex | **Done** (version C in `main.tex`) |
+| 12 Compile pass | **Next** |
 | 13 Xplore search | Not started |
 | 14 Submit | Not started |
 
-When you say go, we start at **Step 11** (rewrite `main.tex`). Do not skip to extra clips, MUSHRA, HATS, or ML.
+When you say go, we start at **Step 12** (compile and claim check). Do not skip to extra clips, MUSHRA, HATS, or ML.
