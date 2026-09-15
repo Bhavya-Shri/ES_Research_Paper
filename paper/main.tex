@@ -24,7 +24,7 @@
 \maketitle
 
 \begin{abstract}
-Conventional personal-audio limiters reduce listening level by applying one gain to every frequency. A-weighted exposure and programme loudness do not weight the spectrum in the same way, so where the cut is spent can change which meter wins. This paper reports a matched test of three digital systems on 20 clips (16 Freesound recordings and four synthetic signals): frequency-flat gain (S0); a bass-first three-band heuristic with a $-12$\,dB low shelf, harmonic fill, and a mild mid compressor (S1); and the same architecture with the shelf and harmonics off and a stronger mid cut (S2). At matched BS.1770 loudness (LUFS), S1's digital A-weighted $L_{Aeq}$ proxy is on average 1.17\,dB \emph{higher} than S0. The bass-first hypothesis is not supported. S2 reverses the sign: $-0.27$\,dB versus S0 (bootstrap 95\% CI $[-0.45,\,-0.11]$). The margin is modest. The same pairs scored with a C-weighted proxy flip again: S1 looks better on $L_{Ceq}$ ($-0.58$\,dB) and S2 slightly worse ($+0.06$\,dB). Frequency-selective limiting is not uniformly better or worse than flat gain; it is better for the meter whose weight is large where the processor cuts. All levels are digital-domain proxies, not calibrated ear-level SPL. S2 is a configuration of S1, not a new architecture.
+Conventional personal-audio limiters reduce listening level by applying one gain to every frequency. A-weighted exposure and programme loudness do not weight the spectrum in the same way, so where the cut is spent can change which meter wins. This paper reports a matched test of three digital systems on 20 clips (16 Freesound recordings and four synthetic signals): frequency-flat gain (S0); a bass-first three-band heuristic with a $-12$\,dB low shelf, harmonic fill, and a mild mid compressor (S1); and the same processor with the shelf and harmonics off and a stronger mid cut (S2). At matched BS.1770 loudness (LUFS), S1's digital A-weighted $L_{Aeq}$ proxy is on average 1.17\,dB \emph{higher} than S0. The bass-first hypothesis is not supported. S2 reverses the sign: $-0.27$\,dB versus S0 (bootstrap 95\% CI $[-0.45,\,-0.11]$). The margin is modest. The same pairs scored with a C-weighted proxy flip again: S1 looks better on $L_{Ceq}$ ($-0.58$\,dB) and S2 slightly worse ($+0.06$\,dB). Frequency-selective limiting is not uniformly better or worse than flat gain; it is better for the meter whose weight is large where the processor cuts. All levels are digital-domain proxies, not calibrated ear-level sound pressure. S2 is a configuration of S1, not a new limiter.
 \end{abstract}
 
 \begin{IEEEkeywords}
@@ -346,7 +346,7 @@ Per-clip $\Delta L_{Aeq}$ and the dual $\Delta$LUFS are in Table~\ref{tab:percli
 
 \subsection{C-weighting dependence}
 
-The same matched-LUFS pairs were re-scored with $L_{Ceq}$ (same RMS-plus-offset helper; not ear-level SPL). The hypothesis, written before looking, was HC above. C at 40\,Hz is about $-2$\,dB; A is about $-35$\,dB. On $n=20$, S1 mean $\Delta L_{Aeq}=+1.17$\,dB but mean $\Delta L_{Ceq}=-0.58$\,dB (bootstrap 95\% CI $[-0.94,\,-0.26]$; two-sided Wilcoxon $p=1.0\times 10^{-4}$). S2 mean $\Delta L_{Aeq}=-0.27$\,dB but mean $\Delta L_{Ceq}=+0.06$\,dB (CI $[0.02,\,0.12]$; $p=0.007$). Both sign predictions hold. Frequency-selective limiting is not uniformly better or worse than flat gain; it is better for the meter whose weight is large where the processor cuts. H.870 chose A. These remain digital-domain proxies. \textbf{HC is supported.}
+The same matched-LUFS pairs were re-scored with $L_{Ceq}$ (same RMS-plus-offset helper; not ear-level sound pressure). The hypothesis, written before looking, was HC above. C at 40\,Hz is about $-2$\,dB; A is about $-35$\,dB. On $n=20$, S1 mean $\Delta L_{Aeq}=+1.17$\,dB but mean $\Delta L_{Ceq}=-0.58$\,dB (bootstrap 95\% CI $[-0.94,\,-0.26]$; two-sided Wilcoxon $p=1.0\times 10^{-4}$). S2 mean $\Delta L_{Aeq}=-0.27$\,dB but mean $\Delta L_{Ceq}=+0.06$\,dB (CI $[0.02,\,0.12]$; $p=0.007$). Both sign predictions hold. Frequency-selective limiting is not uniformly better or worse than flat gain; it is better for the meter whose weight is large where the processor cuts. H.870 chose A. These remain digital-domain proxies. \textbf{HC is supported.}
 
 \subsection{S1 at matched exposure}
 
@@ -354,7 +354,7 @@ Fig.~\ref{fig:h1} is the dual view for S1. At equal digital $L_{Aeq}$, S1 is qui
 
 \begin{figure*}[!t]
 \centering
-\includegraphics[width=\textwidth]{matched_exposure_quality.png}
+\includegraphics[width=\textwidth]{matched_exposure_lsd.png}
 \caption{Left: LUFS at matched digital $L_{Aeq}$ proxy for S1 versus S0. S1 is quieter on bass-heavy clips. Right: log-spectral distance versus the original at the same match. LSD is an objective distance, not a listening-test score.}
 \label{fig:h1}
 \end{figure*}
@@ -405,7 +405,7 @@ LUFS is a standard loudness meter, not a booth loudness match. Band edges, shelf
 \section{Conclusion}
 \label{sec:conclusion}
 
-We asked whether a three-band heuristic could reduce a digital A-weighted exposure proxy more than turning the whole signal down, at the same LUFS, and whether that requires cutting where $w_A$ is large. On 20 clips the bass-first system (S1) did not: its proxy was 1.17\,dB higher on average, and 1.6 to 2.7\,dB higher on real bass loops. The same architecture with the shelf off and a stronger mid cut (S2) reversed the sign ($-0.27$\,dB). C-weighting flipped both conclusions. The useful outcome is the allocation rule, not a new limiter: if an A-weighted dose limit is the constraint, spend attenuation where $w_A(f)$ is large; bass-first cuts are a poor allocation for that meter. The S2 margin is modest. Calibrated ear-simulator measurements and a locked-volume listening test remain the next experimental step.
+We asked whether a three-band heuristic could reduce a digital A-weighted exposure proxy more than turning the whole signal down, at the same LUFS, and whether that requires cutting where $w_A$ is large. On 20 clips the bass-first system (S1) did not: its proxy was 1.17\,dB higher on average, and 1.6 to 2.7\,dB higher on real bass loops. The same processor with the shelf off and a stronger mid cut (S2) reversed the sign ($-0.27$\,dB). C-weighting flipped both conclusions. The useful outcome is the allocation rule, not a new limiter: if an A-weighted dose limit is the constraint, spend attenuation where $w_A(f)$ is large; bass-first cuts are a poor allocation for that meter. The S2 margin is modest. Calibrated ear-simulator measurements and a locked-volume listening test remain the next experimental step.
 
 \bibliographystyle{IEEEtran}
 \bibliography{references}

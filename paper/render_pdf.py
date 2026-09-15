@@ -1,4 +1,8 @@
-"""Render the IEEE draft to PDF without a TeX installation."""
+"""Render the IEEE draft to PDF without a TeX installation.
+
+Obsolete for version C. The paper source is main.tex (IEEEtran).
+Do not submit the fpdf output; it is not the current draft.
+"""
 
 from __future__ import annotations
 

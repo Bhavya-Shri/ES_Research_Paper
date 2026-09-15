@@ -203,7 +203,7 @@ def plot_matched_exposure(by: dict) -> None:
     axes[1].set_ylabel("Log-spectral distance (dB)")
     axes[1].set_title("Spectral distance at matched $L_{Aeq}$")
     axes[1].legend()
-    save(fig, "matched_exposure_quality.png")
+    save(fig, "matched_exposure_lsd.png")
 
 
 def plot_metric_mismatch(by: dict) -> None:

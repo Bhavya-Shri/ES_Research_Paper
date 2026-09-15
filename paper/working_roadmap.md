@@ -188,7 +188,7 @@ Wilcoxon/CI for S2 deltas; optional paired S1 vs S2.
 
 **Status:** done. Title *Metric-Aligned Frequency Allocation for Personal-Audio Dose Limiting*; abstract keeps S1 failure. S0/S1/S2 methods; `matched_loudness_s1_s2.png` and `perclip_table.tex` wired; C-weighting kept; S2 margin called modest. Compile/claim search is Step 12.
 
-### Step 12 — Compile and consistency pass  ← **NEXT**
+### Step 12 — Compile and consistency pass
 
 - `pdflatex` / Overleaf IEEEtran.
 - Search PDF for: SPL, hearing loss, quality, novel architecture, optimal, adaptive.
@@ -196,11 +196,13 @@ Wilcoxon/CI for S2 deltas; optional paired S1 vs S2.
 
 **Done when:** PDF builds; claims = data.
 
+**Status:** done on the source. Claim hits in `main.tex` are denials or proxy disclaimers; `matched_exposure_quality.png` renamed to `matched_exposure_lsd.png`; stale fpdf `Frequency_Adaptive_Audio_Limiting.pdf` removed. No local `pdflatex`/`tectonic`; the IEEE PDF is an Overleaf compile of `main.tex`. `render_pdf.py` is obsolete.
+
 ---
 
 ## Phase F — Submit (after the paper matches)
 
-### Step 13 — Literature close-out (IEEE Xplore + AES, not only Google)
+### Step 13 — Literature close-out (IEEE Xplore + AES, not only Google)  ← **NEXT**
 
 Queries in the audit file §8 Phase 7. Add anything that is a real neighbour.
 
@@ -244,8 +246,8 @@ Those are a **second** paper or a journal extension.
 | 9 Stats S2 | **Done** (`stats_s2.json`; CI excludes 0) |
 | 10 C-weighting | **Done** (`stats_cweight.json`; S1 −0.58 dB, S2 +0.06 dB) |
 | 11 Rewrite tex | **Done** (version C in `main.tex`) |
-| 12 Compile pass | **Next** |
-| 13 Xplore search | Not started |
+| 12 Compile pass | **Done** (tex claim check; Overleaf for IEEE PDF) |
+| 13 Xplore search | **Next** |
 | 14 Submit | Not started |
 
-When you say go, we start at **Step 12** (compile and claim check). Do not skip to extra clips, MUSHRA, HATS, or ML.
+When you say go, we start at **Step 13** (IEEE Xplore + AES close-out). Compile `main.tex` on Overleaf when you want a PDF. Do not skip to extra clips, MUSHRA, HATS, or ML.

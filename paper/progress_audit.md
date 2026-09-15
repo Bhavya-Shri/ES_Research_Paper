@@ -5,7 +5,7 @@
 **Background plan:** `paper/publishing_audit_and_roadmap.md` (13 Sep; still the venue/novelty strategy)  
 **Paper walkthrough:** `paper/walkthrough_notes.md` (explains the *old* S1-only draft)
 
-This file is the status snapshot after Phase E Step 11 (version-C rewrite of `main.tex`). It is not a substitute for the original publishing audit.
+This file is the status snapshot after Phase E Step 12 (claim check). It is not a substitute for the original publishing audit.
 
 **How this file is kept:** after every stretch, update *this* file before calling the step done, then commit it with the code/results and push `main`.
 
@@ -26,7 +26,7 @@ S1 loses at matched LUFS (+1.17 dB); S2 reverses the sign (−0.27 dB, bootstrap
 
 S1 remains the failed heuristic on purpose. S2 knobs are frozen (`sub_atten_db=0`, `harmonic_mix=0`, `mid_target_dba=72`).
 
-**Paper vs data:** `main.tex` is version C: S0/S1/S2 methods, S1 +1.17\,dB failure kept, S2 grouped bars and stats, C-weighting paragraph, modest-margin language. Title is *Metric-Aligned Frequency Allocation for Personal-Audio Dose Limiting*; the abstract keeps S1's failure. PDF compile and claim search are Step 12.
+**Paper vs data:** `main.tex` is version C. Claim vocabulary was searched; remaining hits are denials or calibrated-proxy disclaimers. No `pdflatex` on this machine; the IEEEtran PDF is an Overleaf compile of `main.tex`. The old fpdf file `Frequency_Adaptive_Audio_Limiting.pdf` is removed so it cannot be submitted by mistake.
 
 **Git:** https://github.com/Bhavya-Shri/ES_Research_Paper.git — branch `main`. This file is updated after every stretch and pushed with that stretch.
 
@@ -48,13 +48,11 @@ S1 remains the failed heuristic on purpose. S2 knobs are frozen (`sub_atten_db=0
 | 9 Stats S2 | C | **Done** (required part ran with Step 7) | `results/tables/stats_s2.json`; CI excludes 0. Optional paired S1 vs S2 test **not** implemented |
 | **10 C-weighting** | **D** | **Done** | `exposure_dsp/cweighting.py`; `stats_cweight.json`; S1 ΔLCeq −0.58 dB, S2 +0.06 dB; both hypotheses held |
 | **11 Rewrite `main.tex`** | **E** | **Done** | version C; S0/S1/S2; S2 figure; C paragraph; modest margin |
-| 12 Compile / claim check | E | **Next** | |
-| 13 IEEE Xplore + AES close-out | F | Not started | web/patent pass only |
+| **12 Compile / claim check** | **E** | **Done** (source check; no local `pdflatex`) | claim hits qualified; stale fpdf PDF removed; IEEE PDF is Overleaf |
+| 13 IEEE Xplore + AES close-out | F | **Next** | web/patent pass only |
 | 14 Venue + submit | F | Not started | |
 
-**Do not skip to hardware, extra clips, MUSHRA, or ML.** Those wait until Step 12.
-
-Step 9 is after Step 8 on the list. Its *required* work (Wilcoxon/CI JSON) already existed before the figures. After Step 8 the next *unfinished* step is 10.
+**Do not skip to hardware, extra clips, MUSHRA, or ML.** Those wait until after Step 12.
 
 ---
 
@@ -128,7 +126,21 @@ S1 16-real \(\Delta L_{Ceq}\) −0.40 dB; S2 16-real +0.08 dB. Lesson: allocatio
 - Limitations: digital proxy; mid cut may hurt speech; no MUSHRA; modest S2 margin.
 - Conclusion: design rule, not a new limiter.
 
-**Missing until Step 12:** compiled PDF whose claims match this tex. `paper/Frequency_Adaptive_Audio_Limiting.pdf` is still the old filename on GitHub.
+**Missing until Overleaf:** a compiled IEEEtran PDF. Compile `paper/main.tex` there. `render_pdf.py` is obsolete.
+
+### 2.7 Step 12 claim search (`main.tex`)
+
+| Phrase | Where | Disposition |
+|---|---|---|
+| SPL | Limitations | Kept as *does not report ear-level SPL* |
+| hearing loss | Limitations | Kept as *does not show prevention of hearing loss* |
+| architecture | Gap + param caption | Kept as *does not introduce / not a second architecture* |
+| loudness-preservation | Results H1-S1 | Kept as *not supported as a loudness-preservation claim* |
+| quality | figure filename | Renamed to `matched_exposure_lsd.png` |
+| optimal | — | No hit in prose |
+| adaptive | `references.bib` only | Fathima / PEAQ / MUSHRA titles; not our claim |
+
+No leftover “loudness preservation succeeded” language. Numbers match `results/tables/` (S1 +1.17, S2 −0.27, C −0.58 / +0.06).
 
 ### 2.6 Artifacts that exist (Steps 0–10)
 
@@ -146,6 +158,7 @@ S1 16-real \(\Delta L_{Ceq}\) −0.40 dB; S2 16-real +0.08 dB. Lesson: allocatio
 | `results/frozen/draft-negative-v1/` | S1 snapshot |
 | `paper/make_figures.py` | S1 + S2 plots and both table writers |
 | `paper/figures/matched_loudness_s1_s2.png` | Grouped bars |
+| `paper/figures/matched_exposure_lsd.png` | S1 dual match (LUFS / LSD) |
 | `paper/perclip_table.tex` | S1 and S2 \(\Delta L_{Aeq}\) / \(\Delta\)LUFS |
 | `paper/references.bib` | Chen2023, US9980028, US6826515, Fathima2026 |
 | `exposure_dsp/cweighting.py` | IEC C IIR + analytic curve |
@@ -161,9 +174,9 @@ S1 16-real \(\Delta L_{Ceq}\) −0.40 dB; S2 16-real +0.08 dB. Lesson: allocatio
 
 Do these **in roadmap order**. Do not retune mid target 72 after seeing \(\Delta\). After each step, update this file and push.
 
-### Immediate — Step 12 (next stretch)
+### Immediate — Step 13 (next stretch)
 
-Compile IEEEtran (`pdflatex` / Overleaf). Search the PDF for SPL, hearing loss, quality, novel architecture, optimal, adaptive. Qualify or delete each hit. Every number must match `results/tables/`.
+IEEE Xplore + AES neighbour search (queries in `publishing_audit_and_roadmap.md` §8 Phase 7). Add anything that is a real neighbour. Compile `main.tex` on Overleaf when convenient; there is no local `pdflatex`.
 
 ### Then — Steps 13–14 (submit)
 
@@ -191,7 +204,7 @@ IEEE Xplore + AES neighbour search; pick a conference/AES venue (reversal story 
 | Chen vs “Liang 2023” | The IJERPH paper is Chen, Xue, Wang, Cai, Zhu (2023). Cite `Chen2023`. |
 | Quality / SPL language | Still forbidden. Digital \(L_{Aeq}\) proxy only. |
 | p-hacking S2 | Mid target 72 was frozen before the 20-clip mean. Leave it. |
-| Stale PDF on GitHub | `Frequency_Adaptive_Audio_Limiting.pdf` is the old filename; `main.tex` is the source of truth. |
+| Stale PDF on GitHub | Old fpdf `Frequency_Adaptive_Audio_Limiting.pdf` removed. IEEE PDF = Overleaf `main.tex`. |
 | C-weighting oversell | S1 on C is a real sign flip (−0.58 dB); S2 on C is only +0.06 dB. Write meter-dependence, not “C is the right safety meter.” |
 | Saved wavs vs tables | `save_wav` peak-normalizes if \|x\|>1. C-weighting used float re-process + CSV gains, not those wavs. |
 
@@ -213,4 +226,4 @@ S1 freeze (do not overwrite as the source of truth): `results/frozen/draft-negat
 
 ## 7. Next action
 
-**Step 12.** When you say go: compile the IEEEtran PDF and run the claim search (SPL / hearing loss / quality / novel architecture / optimal / adaptive). Update this file after that pass. Do not retune knobs.
+**Step 13.** When you say go: IEEE Xplore + AES close-out (queries in the 13 Sep publishing audit §8). Do not retune knobs. Compile `paper/main.tex` on Overleaf in parallel if you want a PDF.
