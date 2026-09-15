@@ -5,7 +5,7 @@
 **Background plan:** `paper/publishing_audit_and_roadmap.md` (13 Sep; still the venue/novelty strategy)  
 **Paper walkthrough:** `paper/walkthrough_notes.md` (explains the *old* S1-only draft)
 
-This file is the status snapshot after Phase A–C through the S2 sign gate. It is not a substitute for the original publishing audit.
+This file is the status snapshot after Phase A–C through the three-way figures (Step 8). It is not a substitute for the original publishing audit.
 
 ---
 
@@ -24,7 +24,7 @@ S1 loses at matched LUFS (+1.17 dB); S2 reverses the sign (−0.27 dB, bootstrap
 
 S1 remains the failed heuristic on purpose. S2 knobs are frozen (`sub_atten_db=0`, `harmonic_mix=0`, `mid_target_dba=72`).
 
-**Paper vs data:** `paper/main.tex` still tells the **S1-only** story (plus Phase B citations, title, stats, and the \(W_A/W_K\) figure). It does **not** yet report S2. That is the remaining rewrite (Step 11), after figures (Step 8).
+**Paper vs data:** figures and `perclip_table.tex` now show S1 and S2. `paper/main.tex` still tells the **S1-only** story (plus Phase B citations, title, stats, and the \(W_A/W_K\) figure). It does **not** yet report S2. That rewrite is Step 11, after optional C-weighting (Step 10).
 
 ---
 
@@ -40,9 +40,9 @@ S1 remains the failed heuristic on purpose. S2 knobs are frozen (`sub_atten_db=0
 | 5 S2 config | C | **Done** | `ProposedConfig.aligned()`; S1 defaults unchanged |
 | 6 Experiment S1+S2 | C | **Done** | `results/tables/comparison.csv`, `comparison_s1_s2.csv`; S1 mean still +1.174 dB vs frozen |
 | 7 Sign gate | C | **Done** | Reversal; S2 knobs frozen; story recorded in `working_roadmap.md` |
-| **8 Three-way figures** | **C** | **Next** | `make_figures.py` still plots S1 only |
+| **8 Three-way figures** | **C** | **Done** | `paper/figures/matched_loudness_s1_s2.png`; `perclip_table.tex` means +1.17 / −0.27 dB |
 | 9 Stats S2 | C | **Done** (ran with Step 7) | `results/tables/stats_s2.json`; CI excludes 0 |
-| 10 C-weighting | D | Not started | no `cweighting.py` |
+| 10 C-weighting | D | **Next** | no `cweighting.py` |
 | 11 Rewrite `main.tex` | E | Not started as version C | Results still S1-only |
 | 12 Compile / claim check | E | Not started | |
 | 13 IEEE Xplore + AES close-out | F | Not started | web/patent pass only |
@@ -67,11 +67,12 @@ S1 remains the failed heuristic on purpose. S2 knobs are frozen (`sub_atten_db=0
 - Related work now cites device algorithms so “H.870 is silent” is not “nobody has an algorithm.”
 - Title no longer promises reduced exposure / loudness preservation.
 
-### 2.3 Phase C experiment (Steps 5–7, 9)
+### 2.3 Phase C experiment (Steps 5–9)
 
 - S2 is a **config**, not a new architecture.
 - `experiment.py` processes `proposed` (S1) and `aligned` (S2); each is matched to flat gain on LUFS and on \(L_{Aeq}\). S2 flat-gain rows are named `aligned_gain_matched_loudness` / `aligned_gain_matched_exposure`.
 - Ablation was **not** re-run on the S2 pass (`include_ablation=False`). The frozen S1 ablation table still stands.
+- Step 8: `python paper/make_figures.py` now writes grouped bars (`matched_loudness_s1_s2.png`) and a four-column per-clip table. S1-only `matched_loudness_delta.png` is still generated. Regenerated means: S1 **+1.174 dB**, S2 **−0.267 dB**.
 
 **S2 numbers (matched LUFS \(\Delta L_{Aeq}\), aligned − flat):**
 
@@ -93,7 +94,7 @@ Already in `main.tex` from Phase B:
 - \(W_A/W_K\) figure next to the A-weighting check figure.
 - S1 Wilcoxon/CI sentence.
 
-**Missing from `main.tex`:** S2, three-system methods, reversal result, optional C-weighting, version-C title/contribution bullets.
+**Missing from `main.tex`:** S2, three-system methods, reversal result, `matched_loudness_s1_s2.png` / updated table include, optional C-weighting, version-C title/contribution bullets. Figures exist; they are not wired into the tex yet.
 
 ---
 
@@ -101,17 +102,11 @@ Already in `main.tex` from Phase B:
 
 Do these **in roadmap order**. Do not retune mid target 72 after seeing \(\Delta\).
 
-### Immediate — Step 8 (next coding stretch)
-
-Grouped-bar figure: per clip, S1−S0 and S2−S0 at matched LUFS. Per-clip LaTeX table with both deltas. Hook `paper/make_figures.py` to `comparison.csv` / `comparison_s1_s2.csv`.
-
-**Done when:** paper-ready PNGs and `perclip_table.tex` regenerate from the new CSV.
-
-Step 9 is already satisfied (`stats_s2.json`). Optional extra: paired S1 vs S2 test; not required to proceed.
-
-### Then — Step 10 (recommended, still cheap)
+### Immediate — Step 10 (next coding stretch)
 
 C-weighting proxy. **Hypothesis, already on the record:** at matched LUFS, S1 should look better on \(L_{Ceq}\) than on \(L_{Aeq}\) (bass cuts count for C); S2 the opposite.
+
+Step 8 is done (`matched_loudness_s1_s2.png`, `perclip_table.tex`). Step 9 is already satisfied (`stats_s2.json`). Optional extra: paired S1 vs S2 test; not required to proceed.
 
 ### Then — Steps 11–12 (the actual paper)
 
@@ -159,7 +154,7 @@ IEEE Xplore + AES neighbour search; pick a conference/AES venue (reversal story 
 python -m exposure_dsp checks          # includes weighting-ratio figure
 python -m exposure_dsp stats           # stats_s1.json + stats_s2.json from comparison.csv
 python -m exposure_dsp experiment      # full S1+S2 comparison (slow; ablation on by default)
-python paper/make_figures.py           # still S1-only until Step 8
+python paper/make_figures.py           # S1 + S2 grouped bars and perclip_table.tex
 ```
 
 S1 freeze (do not overwrite as the source of truth): `results/frozen/draft-negative-v1/`.
@@ -168,4 +163,4 @@ S1 freeze (do not overwrite as the source of truth): `results/frozen/draft-negat
 
 ## 7. Next action
 
-**Step 8.** When you say go: grouped bars + per-clip table for S1 and S2 at matched LUFS, generated from `results/tables/`.
+**Step 10.** When you say go: IEC 61672 C-weighting proxy (`exposure_dsp/cweighting.py`), same RMS+offset helper as A; add a C-weighted column or small JSON; one Results paragraph after looking. Hypothesis is already written: S1 should look better on \(L_{Ceq}\) than on \(L_{Aeq}\); S2 the opposite. Do not retune knobs.

@@ -1,34 +1,34 @@
 \begin{table*}[!t]
 \centering
-\caption{Per-clip comparison. $\Delta L_{Aeq}$ is proposed minus frequency-flat gain at matched LUFS (positive: proposed has \emph{higher} exposure proxy). $\Delta$LUFS is proposed minus flat gain at matched $L_{Aeq}$ (negative: proposed is quieter). LSD is vs.\ the unprocessed clip at the matched-exposure condition.}
+\caption{Per-clip $\Delta L_{Aeq}$ at matched LUFS (processor minus flat gain; positive: higher digital exposure proxy) and the dual $\Delta$LUFS at matched $L_{Aeq}$. S1 is the bass-first heuristic; S2 is the metric-aligned mid cut.}
 \label{tab:perclip}
 \renewcommand{\arraystretch}{1.08}
 \begin{tabular}{l l r r r r}
 \hline
-Clip & Type & $\Delta L_{Aeq}$ (dB) & $\Delta$LUFS (dB) & LSD prop. & LSD flat \\
+Clip & Type & $\Delta L_{Aeq}$ S1 & $\Delta L_{Aeq}$ S2 & $\Delta$LUFS S1 & $\Delta$LUFS S2 \\
 \hline
-Bass+drums 130 & Bass & +2.30 & -2.30 & 0.54 & 0.74 \\
-Drum and bass & Bass & +1.61 & -1.61 & 0.70 & 0.19 \\
-Bass loop 120 & Bass & +1.59 & -1.59 & 0.58 & 1.36 \\
-Lofi drums & Bass & +1.63 & -1.63 & 0.51 & 0.63 \\
-Boombap & Bass & +2.67 & -2.67 & 0.74 & 0.25 \\
-Bass/keys/drums & Bass & +2.07 & -2.07 & 0.73 & 0.15 \\
-Synth bass & Synth & +4.91 & -4.91 & 0.76 & 0.18 \\
-Synth mixed & Synth & +3.87 & -3.87 & 0.78 & 0.11 \\
-Spoken poem & Speech & +0.84 & -0.85 & 0.49 & 0.20 \\
-Male commands & Speech & -0.12 & +0.12 & 0.67 & 1.69 \\
-Monologue & Speech & +1.44 & -1.44 & 0.47 & 0.17 \\
-Synth speech & Synth & +0.01 & -0.01 & 0.22 & 0.12 \\
-Choir amen & Vocal & +0.03 & -0.03 & 0.27 & 0.45 \\
-Men choir & Vocal & +0.04 & -0.04 & 0.25 & 0.01 \\
-Female vocal & Vocal & -0.07 & +0.07 & 0.57 & 1.40 \\
-Male choir & Vocal & +0.22 & -0.22 & 0.37 & 0.08 \\
-Acoustic & Vocal & +0.38 & -0.38 & 0.23 & 0.12 \\
-Snare/crash & Drums & +0.05 & -0.05 & 0.28 & 0.03 \\
-Cymbals & Drums & -0.01 & +0.01 & 0.32 & 0.03 \\
-Synth transients & Synth & +0.01 & -0.01 & 0.25 & 0.09 \\
+Bass+drums 130 & Bass & +2.30 & -0.69 & -2.30 & +0.69 \\
+Drum and bass & Bass & +1.61 & -0.96 & -1.61 & +0.96 \\
+Bass loop 120 & Bass & +1.59 & -0.00 & -1.59 & +0.00 \\
+Lofi drums & Bass & +1.63 & -1.08 & -1.63 & +1.08 \\
+Boombap & Bass & +2.67 & -0.51 & -2.67 & +0.51 \\
+Bass/keys/drums & Bass & +2.07 & -0.18 & -2.07 & +0.18 \\
+Synth bass & Synth & +4.91 & +0.00 & -4.91 & -0.00 \\
+Synth mixed & Synth & +3.87 & -0.35 & -3.87 & +0.35 \\
+Spoken poem & Speech & +0.84 & -0.18 & -0.85 & +0.18 \\
+Male commands & Speech & -0.12 & -1.19 & +0.12 & +1.18 \\
+Monologue & Speech & +1.44 & -0.07 & -1.44 & +0.07 \\
+Synth speech & Synth & +0.01 & -0.11 & -0.01 & +0.11 \\
+Choir amen & Vocal & +0.03 & -0.02 & -0.03 & +0.02 \\
+Men choir & Vocal & +0.04 & -0.01 & -0.04 & +0.01 \\
+Female vocal & Vocal & -0.07 & -0.16 & +0.07 & +0.16 \\
+Male choir & Vocal & +0.22 & -0.00 & -0.22 & +0.00 \\
+Acoustic & Vocal & +0.38 & -0.03 & -0.38 & +0.03 \\
+Snare/crash & Drums & +0.05 & +0.20 & -0.05 & -0.20 \\
+Cymbals & Drums & -0.01 & +0.02 & +0.01 & -0.02 \\
+Synth transients & Synth & +0.01 & -0.00 & -0.01 & +0.00 \\
 \hline
-Mean ($n$=20) &  & +1.17 & -1.17 & 0.49 & 0.40 \\
+Mean ($n$=20) &  & +1.17 & -0.27 & -1.17 & +0.27 \\
 \hline
 \end{tabular}
 \end{table*}

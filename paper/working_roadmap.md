@@ -134,7 +134,7 @@ Compute mean \(\Delta L_{Aeq}\) (aligned − flat) at matched LUFS.
 
 **Story:** S1 loses at matched LUFS (+1.17 dB); S2 reverses the sign (−0.27 dB, bootstrap 95% CI [−0.45, −0.11], two-sided Wilcoxon p=0.001), so attenuation spent where \(w_A\) is large beats flat gain on the digital \(L_{Aeq}\) proxy. The margin is modest; do not twist knobs.
 
-### Step 8 — Figures and tables for the three-way comparison  ← **NEXT**
+### Step 8 — Figures and tables for the three-way comparison
 
 **Implement / update**
 
@@ -146,17 +146,21 @@ Compute mean \(\Delta L_{Aeq}\) (aligned − flat) at matched LUFS.
 
 **Done when:** `python paper/make_figures.py` (or equivalent) produces paper-ready PNGs from the new CSV.
 
+**Status:** done. `plot_matched_loudness_s1_s2` + `write_s1_s2_table` in `paper/make_figures.py`. S1-only `matched_loudness_delta.png` kept. New grouped bars: `paper/figures/matched_loudness_s1_s2.png`. `paper/perclip_table.tex` now has S1 and S2 \(\Delta L_{Aeq}\) / \(\Delta\)LUFS (means +1.17 / −0.27 dB). Frozen S1 ablation figure unchanged. `main.tex` not rewritten yet (Step 11).
+
 ### Step 9 — Stats for S2 + contrast
 
 Wilcoxon/CI for S2 deltas; optional paired S1 vs S2.
 
 **Done when:** `stats_s1.json` and `stats_s2.json` (or one file with both).
 
+**Status:** done (ran with Step 7). `results/tables/stats_s2.json`; n=20 mean −0.27 dB, CI [−0.45, −0.11]. Paired S1 vs S2 test not required.
+
 ---
 
 ## Phase D — One extra meter (cheap, high insight)
 
-### Step 10 — C-weighting proxy
+### Step 10 — C-weighting proxy  ← **NEXT**
 
 **Implement:** `exposure_dsp/cweighting.py` (IEC 61672 C), same RMS+offset helper as A.
 
@@ -232,12 +236,12 @@ Those are a **second** paper or a journal extension.
 | 5 S2 config | **Done** (`ProposedConfig.aligned()`: shelf 0 dB, mix 0, mid target 72) |
 | 6 Experiment S1+S2 | **Done** (`comparison_s1_s2.csv`; S1 +1.17 dB, S2 −0.27 dB) |
 | 7 Sign gate | **Done** — reversal; S2 knobs frozen at mid target 72 |
-| 8 Figures | **Next** |
+| 8 Figures | **Done** (`matched_loudness_s1_s2.png`; `perclip_table.tex` S1+S2) |
 | 9 Stats S2 | **Done** (`stats_s2.json`; CI excludes 0) |
-| 10 C-weighting | Not started |
+| 10 C-weighting | **Next** |
 | 11 Rewrite tex | Not started |
 | 12 Compile pass | Not started |
 | 13 Xplore search | Not started |
 | 14 Submit | Not started |
 
-When you say go, we start at **Step 1**.
+When you say go, we start at **Step 10** (C-weighting). Do not skip to extra clips, MUSHRA, HATS, or ML.

@@ -7,6 +7,7 @@ from __future__ import annotations
 
 import csv
 import shutil
+import sys
 from collections import defaultdict
 from pathlib import Path
 
@@ -14,6 +15,8 @@ import matplotlib.pyplot as plt
 import numpy as np
 
 ROOT = Path(__file__).resolve().parent.parent
+if str(ROOT) not in sys.path:
+    sys.path.insert(0, str(ROOT))
 TABLES = ROOT / "results" / "tables"
 SRC_FIGS = ROOT / "results" / "figures"
 OUT = Path(__file__).resolve().parent / "figures"
@@ -129,7 +132,49 @@ def plot_matched_loudness_delta(by: dict) -> list[dict]:
     return recs
 
 
+def plot_matched_loudness_s1_s2(by: dict) -> list[dict]:
+    """Grouped bars: S1−S0 and S2−S0 at matched LUFS (the three-system figure)."""
+    labels, d1, d2 = [], [], []
+    recs = []
+    for clip in ORDER:
+        p = by[(clip, "proposed")]
+        g1 = by[(clip, "gain_matched_loudness")]
+        a = by[(clip, "aligned")]
+        g2 = by[(clip, "aligned_gain_matched_loudness")]
+        s1 = _f(p, "laeq_proxy") - _f(g1, "laeq_proxy")
+        s2 = _f(a, "laeq_proxy") - _f(g2, "laeq_proxy")
+        labels.append(LABEL[clip])
+        d1.append(s1)
+        d2.append(s2)
+        recs.append(
+            {
+                "clip": clip,
+                "label": LABEL[clip],
+                "group": GROUP[clip],
+                "dlaeq_s1": s1,
+                "dlaeq_s2": s2,
+            }
+        )
+
+    x = np.arange(len(labels))
+    w = 0.38
+    fig, ax = plt.subplots(figsize=(7.16, 3.7))
+    ax.bar(x - w / 2, d1, w, label="S1 bass-first", color="#c44e52", edgecolor="none")
+    ax.bar(x + w / 2, d2, w, label="S2 aligned", color="#55a868", edgecolor="none")
+    ax.axhline(0.0, color="k", lw=0.7)
+    ax.set_xticks(x)
+    ax.set_xticklabels(labels, rotation=40, ha="right")
+    ax.set_ylabel(r"$\Delta L_{Aeq}$ (dB)")
+    ax.set_title("Exposure proxy at matched LUFS (processor minus flat gain)")
+    ax.set_xlim(-0.6, len(labels) - 0.4)
+    ax.set_ylim(-1.45, 5.35)
+    ax.legend(loc="upper right", ncol=2, frameon=True)
+    save(fig, "matched_loudness_s1_s2.png")
+    return recs
+
+
 def plot_matched_exposure(by: dict) -> None:
+    """S1 loudness and LSD at matched LAeq (kept so the dual-matching figure still regenerates)."""
     labels = [LABEL[c] for c in ORDER]
     p_lufs, g_lufs, p_lsd, g_lsd = [], [], [], []
     for clip in ORDER:
@@ -235,49 +280,20 @@ def plot_ablation(rows: list[dict]) -> None:
 
 
 def write_table(by: dict) -> dict:
-    lines = [
-        r"\begin{table*}[!t]",
-        r"\centering",
-        r"\caption{Per-clip comparison. $\Delta L_{Aeq}$ is proposed minus frequency-flat gain at matched LUFS (positive: proposed has \emph{higher} exposure proxy). $\Delta$LUFS is proposed minus flat gain at matched $L_{Aeq}$ (negative: proposed is quieter). LSD is vs.\ the unprocessed clip at the matched-exposure condition.}",
-        r"\label{tab:perclip}",
-        r"\renewcommand{\arraystretch}{1.08}",
-        r"\begin{tabular}{l l r r r r}",
-        r"\hline",
-        r"Clip & Type & $\Delta L_{Aeq}$ (dB) & $\Delta$LUFS (dB) & LSD prop. & LSD flat \\",
-        r"\hline",
-    ]
+    """S1-only summary (kept so the old Fig. 5 numbers still regenerate)."""
     dlaeqs, dlufss, lsd_p, lsd_g = [], [], [], []
     for clip in ORDER:
         p = by[(clip, "proposed")]
         gl = by[(clip, "gain_matched_loudness")]
         ge = by[(clip, "gain_matched_exposure")]
-        dA = _f(p, "laeq_proxy") - _f(gl, "laeq_proxy")
-        dL = _f(p, "lufs") - _f(ge, "lufs")
-        lp = _f(p, "lsd_vs_ref")
-        lg = _f(ge, "lsd_vs_ref")
-        dlaeqs.append(dA)
-        dlufss.append(dL)
-        lsd_p.append(lp)
-        lsd_g.append(lg)
-        g = GROUP[clip]
-        typ = {"Bass": "Bass", "Speech": "Speech", "Vocal": "Vocal", "Drums": "Drums", "Synth": "Synth"}[g]
-        lines.append(
-            f"{LABEL[clip]} & {typ} & {dA:+.2f} & {dL:+.2f} & {lp:.2f} & {lg:.2f} \\\\"
-        )
-    lines.append(r"\hline")
-    lines.append(
-        f"Mean ($n$=20) &  & {float(np.mean(dlaeqs)):+.2f} & {float(np.mean(dlufss)):+.2f} "
-        f"& {float(np.mean(lsd_p)):.2f} & {float(np.mean(lsd_g)):.2f} \\\\"
-    )
-    lines.append(r"\hline")
-    lines.append(r"\end{tabular}")
-    lines.append(r"\end{table*}")
-    (OUT.parent / "perclip_table.tex").write_text("\n".join(lines) + "\n", encoding="utf-8")
-
+        dlaeqs.append(_f(p, "laeq_proxy") - _f(gl, "laeq_proxy"))
+        dlufss.append(_f(p, "lufs") - _f(ge, "lufs"))
+        lsd_p.append(_f(p, "lsd_vs_ref"))
+        lsd_g.append(_f(ge, "lsd_vs_ref"))
     real = [d for d, c in zip(dlaeqs, ORDER) if GROUP[c] != "Synth"]
     bass = [d for d, c in zip(dlaeqs, ORDER) if GROUP[c] == "Bass"]
     voice = [d for d, c in zip(dlaeqs, ORDER) if GROUP[c] in ("Speech", "Vocal", "Drums")]
-    summary = {
+    return {
         "n": len(dlaeqs),
         "mean_dlaeq_matched_lufs": float(np.mean(dlaeqs)),
         "median_dlaeq_matched_lufs": float(np.median(dlaeqs)),
@@ -293,7 +309,56 @@ def write_table(by: dict) -> dict:
         "bass_min": float(min(bass)),
         "bass_max": float(max(bass)),
     }
-    return summary
+
+
+def write_s1_s2_table(by: dict) -> dict:
+    """Per-clip LaTeX: S1 and S2 ΔLAeq at matched LUFS (and the dual ΔLUFS)."""
+    lines = [
+        r"\begin{table*}[!t]",
+        r"\centering",
+        r"\caption{Per-clip $\Delta L_{Aeq}$ at matched LUFS (processor minus flat gain; positive: higher digital exposure proxy) and the dual $\Delta$LUFS at matched $L_{Aeq}$. S1 is the bass-first heuristic; S2 is the metric-aligned mid cut.}",
+        r"\label{tab:perclip}",
+        r"\renewcommand{\arraystretch}{1.08}",
+        r"\begin{tabular}{l l r r r r}",
+        r"\hline",
+        r"Clip & Type & $\Delta L_{Aeq}$ S1 & $\Delta L_{Aeq}$ S2 & $\Delta$LUFS S1 & $\Delta$LUFS S2 \\",
+        r"\hline",
+    ]
+    s1_a, s2_a, s1_l, s2_l = [], [], [], []
+    for clip in ORDER:
+        p = by[(clip, "proposed")]
+        g1l = by[(clip, "gain_matched_loudness")]
+        g1e = by[(clip, "gain_matched_exposure")]
+        a = by[(clip, "aligned")]
+        g2l = by[(clip, "aligned_gain_matched_loudness")]
+        g2e = by[(clip, "aligned_gain_matched_exposure")]
+        dA1 = _f(p, "laeq_proxy") - _f(g1l, "laeq_proxy")
+        dA2 = _f(a, "laeq_proxy") - _f(g2l, "laeq_proxy")
+        dL1 = _f(p, "lufs") - _f(g1e, "lufs")
+        dL2 = _f(a, "lufs") - _f(g2e, "lufs")
+        s1_a.append(dA1)
+        s2_a.append(dA2)
+        s1_l.append(dL1)
+        s2_l.append(dL2)
+        typ = GROUP[clip]
+        lines.append(
+            f"{LABEL[clip]} & {typ} & {dA1:+.2f} & {dA2:+.2f} & {dL1:+.2f} & {dL2:+.2f} \\\\"
+        )
+    lines.append(r"\hline")
+    lines.append(
+        f"Mean ($n$=20) &  & {float(np.mean(s1_a)):+.2f} & {float(np.mean(s2_a)):+.2f} "
+        f"& {float(np.mean(s1_l)):+.2f} & {float(np.mean(s2_l)):+.2f} \\\\"
+    )
+    lines.append(r"\hline")
+    lines.append(r"\end{tabular}")
+    lines.append(r"\end{table*}")
+    (OUT.parent / "perclip_table.tex").write_text("\n".join(lines) + "\n", encoding="utf-8")
+    return {
+        "mean_dlaeq_s1": float(np.mean(s1_a)),
+        "mean_dlaeq_s2": float(np.mean(s2_a)),
+        "mean_dlufs_s1": float(np.mean(s1_l)),
+        "mean_dlufs_s2": float(np.mean(s2_l)),
+    }
 
 
 def plot_weighting_ratio_figure() -> None:
@@ -307,11 +372,13 @@ def main() -> None:
     copy_verification()
     plot_weighting_ratio_figure()
     plot_matched_loudness_delta(by)
+    plot_matched_loudness_s1_s2(by)
     plot_matched_exposure(by)
     plot_metric_mismatch(by)
     plot_ablation(_load(TABLES / "ablation.csv"))
     summary = write_table(by)
-    print(summary)
+    s1s2 = write_s1_s2_table(by)
+    print({**summary, **s1s2})
 
 
 if __name__ == "__main__":
