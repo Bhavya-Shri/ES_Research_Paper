@@ -1,0 +1,17 @@
+__pycache__/
+*.py[cod]
+.venv/
+venv/
+.env
+results/**
+!results/.gitkeep
+!results/tables/
+!results/tables/**
+!results/frozen/
+!results/frozen/**
+audio_in/**
+!audio_in/.gitkeep
+!audio_in/README.md
+paper/_pdfdeps/
+.DS_Store
+Thumbs.db
