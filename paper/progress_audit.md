@@ -5,7 +5,7 @@
 **Background plan:** `paper/publishing_audit_and_roadmap.md` (13 Sep; still the venue/novelty strategy)  
 **Paper walkthrough:** `paper/walkthrough_notes.md` (explains the *old* S1-only draft)
 
-This file is the status snapshot after Phase E Step 12 (claim check). It is not a substitute for the original publishing audit.
+This file is the status snapshot after Phase F Step 13 (literature close-out). It is not a substitute for the original publishing audit.
 
 **How this file is kept:** after every stretch, update *this* file before calling the step done, then commit it with the code/results and push `main`.
 
@@ -26,7 +26,7 @@ S1 loses at matched LUFS (+1.17 dB); S2 reverses the sign (−0.27 dB, bootstrap
 
 S1 remains the failed heuristic on purpose. S2 knobs are frozen (`sub_atten_db=0`, `harmonic_mix=0`, `mid_target_dba=72`).
 
-**Paper vs data:** `main.tex` is version C. Claim vocabulary was searched; remaining hits are denials or calibrated-proxy disclaimers. No `pdflatex` on this machine; the IEEEtran PDF is an Overleaf compile of `main.tex`. The old fpdf file `Frequency_Adaptive_Audio_Limiting.pdf` is removed so it cannot be submitted by mistake.
+**Paper vs data:** `main.tex` is version C. Claim vocabulary was searched; remaining hits are denials or calibrated-proxy disclaimers. Related work now also cites US~11006215 and AES TD1008. No `pdflatex` on this machine; the IEEEtran PDF is an Overleaf compile of `main.tex`. The old fpdf file `Frequency_Adaptive_Audio_Limiting.pdf` is removed so it cannot be submitted by mistake.
 
 **Git:** https://github.com/Bhavya-Shri/ES_Research_Paper.git — branch `main`. This file is updated after every stretch and pushed with that stretch.
 
@@ -49,8 +49,8 @@ S1 remains the failed heuristic on purpose. S2 knobs are frozen (`sub_atten_db=0
 | **10 C-weighting** | **D** | **Done** | `exposure_dsp/cweighting.py`; `stats_cweight.json`; S1 ΔLCeq −0.58 dB, S2 +0.06 dB; both hypotheses held |
 | **11 Rewrite `main.tex`** | **E** | **Done** | version C; S0/S1/S2; S2 figure; C paragraph; modest margin |
 | **12 Compile / claim check** | **E** | **Done** (source check; no local `pdflatex`) | claim hits qualified; stale fpdf PDF removed; IEEE PDF is Overleaf |
-| 13 IEEE Xplore + AES close-out | F | **Next** | web/patent pass only |
-| 14 Venue + submit | F | Not started | |
+| **13 IEEE Xplore + AES close-out** | **F** | **Done** | no clone of the matched LUFS/\(L_{Aeq}\) test; added US~11006215 and AES TD1008 |
+| 14 Venue + submit | F | **Next** | reversal story is clean enough for conference / AES |
 
 **Do not skip to hardware, extra clips, MUSHRA, or ML.** Those wait until after Step 12.
 
@@ -120,7 +120,7 @@ S1 16-real \(\Delta L_{Ceq}\) −0.40 dB; S2 16-real +0.08 dB. Lesson: allocatio
 
 - Title *Metric-Aligned Frequency Allocation for Personal-Audio Dose Limiting*; abstract keeps S1 +1.17\,dB failure and the modest S2 reversal.
 - Intro contribution: matched test; S1 fails; allocation follows \(w_A\); S2 reversed the sign.
-- Related work unchanged in neighbours (Chen 2023, patents, Fathima); gap table is S0/S1/S2.
+- Related work neighbours as of Step 11: Chen 2023, US~9980028, US~6826515, Fathima 2026. Step 13 added US~11006215 and AES TD1008.
 - Methods: S0, S1, S2 as one architecture / two configs; \(W_A/W_K\) in the method; param table has both columns.
 - Results: S1 figure kept; S2 grouped bars (`matched_loudness_s1_s2.png`); four-column `perclip_table.tex`; C-weighting; S1 ablation labelled as S1-only.
 - Limitations: digital proxy; mid cut may hurt speech; no MUSHRA; modest S2 margin.
@@ -142,7 +142,30 @@ S1 16-real \(\Delta L_{Ceq}\) −0.40 dB; S2 16-real +0.08 dB. Lesson: allocatio
 
 No leftover “loudness preservation succeeded” language. Numbers match `results/tables/` (S1 +1.17, S2 −0.27, C −0.58 / +0.06).
 
-### 2.6 Artifacts that exist (Steps 0–10)
+### 2.8 Step 13 literature close-out
+
+Search method: web + Google Patents + AES public document pages + Scholar-style queries. No institutional IEEE Xplore login, so this is not a logged-in Xplore harvest.
+
+**Queries (from `publishing_audit_and_roadmap.md` §8 Phase 7):**
+
+- `"sound dose" AND (multiband OR frequency-selective) AND (headphone OR "personal listening")`
+- `(LUFS OR BS.1770) AND (A-weighted OR LAeq) AND (limiter OR compressor)`
+- AES: virtual bass + loudness; streaming loudness vs H.870 / EN 50332-3
+- Patents: neighbours of US~9980028 / US~6826515
+- Cited-by: Chen et al. 2023 (IJERPH) and ITU-T H.870
+
+**Finding:** no clone of a **matched LUFS versus digital \(L_{Aeq}\) frequency-allocation test on music**. Personal sound-zone papers are not neighbours.
+
+**Added (real neighbours, not clones):**
+
+| Cite | What it is | Why it is not the test |
+|---|---|---|
+| US~11006215 (GN Hearing, 2021) | Multiband limiter in a hearing-protection device | Occupational HPD gain, not matched A vs K on music |
+| AES TD1008 (Kean ed., 2021) | Streaming LUFS recs; notes H.870 / EN 50332-3 for portables | Distribution loudness, not an allocation algorithm |
+
+**Looked at, not cited:** Cassidy ICASSP 2004 (loudness-model DRC); US~11268848 (later headset dosimetry, same family as US~6826515).
+
+### 2.6 Artifacts that exist (Steps 0–13)
 
 | Artifact | Role |
 |---|---|
@@ -160,7 +183,7 @@ No leftover “loudness preservation succeeded” language. Numbers match `resul
 | `paper/figures/matched_loudness_s1_s2.png` | Grouped bars |
 | `paper/figures/matched_exposure_lsd.png` | S1 dual match (LUFS / LSD) |
 | `paper/perclip_table.tex` | S1 and S2 \(\Delta L_{Aeq}\) / \(\Delta\)LUFS |
-| `paper/references.bib` | Chen2023, US9980028, US6826515, Fathima2026 |
+| `paper/references.bib` | Chen2023, US9980028, US6826515, Fathima2026, US11006215, AESTD1008 |
 | `exposure_dsp/cweighting.py` | IEC C IIR + analytic curve |
 | `results/tables/stats_cweight.json`, `comparison_cweight.csv` | \(\Delta L_{Ceq}\) at matched LUFS |
 | `paper/figures/cweighting_response.png` | Digital C vs IEC analytic |
@@ -174,13 +197,9 @@ No leftover “loudness preservation succeeded” language. Numbers match `resul
 
 Do these **in roadmap order**. Do not retune mid target 72 after seeing \(\Delta\). After each step, update this file and push.
 
-### Immediate — Step 13 (next stretch)
+### Immediate — Step 14 (next stretch)
 
-IEEE Xplore + AES neighbour search (queries in `publishing_audit_and_roadmap.md` §8 Phase 7). Add anything that is a real neighbour. Compile `main.tex` on Overleaf when convenient; there is no local `pdflatex`.
-
-### Then — Steps 13–14 (submit)
-
-IEEE Xplore + AES neighbour search; pick a conference/AES venue (reversal story is clean enough). Do **not** wait for a coupler or listening test for the first submission.
+Venue + submit. Reversal story is clean enough for a conference / AES first submission. Do **not** wait for a coupler or listening test. Compile `main.tex` on Overleaf (no local `pdflatex`). Pick venue, page limit, and author checklist from `publishing_audit_and_roadmap.md` §6 / Phase 8.
 
 ---
 
@@ -226,4 +245,4 @@ S1 freeze (do not overwrite as the source of truth): `results/frozen/draft-negat
 
 ## 7. Next action
 
-**Step 13.** When you say go: IEEE Xplore + AES close-out (queries in the 13 Sep publishing audit §8). Do not retune knobs. Compile `paper/main.tex` on Overleaf in parallel if you want a PDF.
+**Step 14.** When you say go: venue + submit. Do not retune knobs. Compile `paper/main.tex` on Overleaf for the IEEE PDF.

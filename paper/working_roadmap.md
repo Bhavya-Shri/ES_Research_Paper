@@ -202,11 +202,13 @@ Wilcoxon/CI for S2 deltas; optional paired S1 vs S2.
 
 ## Phase F — Submit (after the paper matches)
 
-### Step 13 — Literature close-out (IEEE Xplore + AES, not only Google)  ← **NEXT**
+### Step 13 — Literature close-out (IEEE Xplore + AES, not only Google)
 
 Queries in the audit file §8 Phase 7. Add anything that is a real neighbour.
 
-### Step 14 — Venue + submit
+**Status:** done. No clone of the matched LUFS vs digital \(L_{Aeq}\) allocation test on music. Added US~11006215 (GN Hearing multiband HPD limiter) and AES TD1008 (streaming LUFS; notes H.870 / EN 50332-3). Search log is in `progress_audit.md` §2.8.
+
+### Step 14 — Venue + submit  ← **NEXT**
 
 - Student / regional IEEE if S2 was not run or is messy.  
 - Conference / AES if S2 story is clean (reversal **or** cannot-game).  
@@ -247,7 +249,7 @@ Those are a **second** paper or a journal extension.
 | 10 C-weighting | **Done** (`stats_cweight.json`; S1 −0.58 dB, S2 +0.06 dB) |
 | 11 Rewrite tex | **Done** (version C in `main.tex`) |
 | 12 Compile pass | **Done** (tex claim check; Overleaf for IEEE PDF) |
-| 13 Xplore search | **Next** |
-| 14 Submit | Not started |
+| 13 Xplore search | **Done** (US~11006215, AES TD1008; no clone of the matched test) |
+| 14 Submit | **Next** |
 
-When you say go, we start at **Step 13** (IEEE Xplore + AES close-out). Compile `main.tex` on Overleaf when you want a PDF. Do not skip to extra clips, MUSHRA, HATS, or ML.
+When you say go, we start at **Step 14** (venue + submit). Compile `main.tex` on Overleaf for the IEEE PDF. Do not skip to extra clips, MUSHRA, HATS, or ML.
