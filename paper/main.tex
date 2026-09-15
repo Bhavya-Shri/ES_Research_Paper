@@ -18,7 +18,7 @@
 \author{Yashwini~Krishna~Murthy and Bhavya~Shri%
 \thanks{The authors are with the Department of Computer Science and Engineering, Vellore Institute of Technology, Chennai, India (e-mail: yashwini.krishna2024@vitstudent.ac.in).}}
 
-\markboth{IEEE Student Research Paper, VIT Chennai}%
+\markboth{DAFx 2027 working draft}%
 {Murthy and Shri: Metric-Aligned Frequency Allocation for Personal-Audio Dose Limiting}
 
 \maketitle
@@ -346,7 +346,14 @@ Per-clip $\Delta L_{Aeq}$ and the dual $\Delta$LUFS are in Table~\ref{tab:percli
 
 \subsection{C-weighting dependence}
 
-The same matched-LUFS pairs were re-scored with $L_{Ceq}$ (same RMS-plus-offset helper; not ear-level sound pressure). The hypothesis, written before looking, was HC above. C at 40\,Hz is about $-2$\,dB; A is about $-35$\,dB. On $n=20$, S1 mean $\Delta L_{Aeq}=+1.17$\,dB but mean $\Delta L_{Ceq}=-0.58$\,dB (bootstrap 95\% CI $[-0.94,\,-0.26]$; two-sided Wilcoxon $p=1.0\times 10^{-4}$). S2 mean $\Delta L_{Aeq}=-0.27$\,dB but mean $\Delta L_{Ceq}=+0.06$\,dB (CI $[0.02,\,0.12]$; $p=0.007$). Both sign predictions hold. Frequency-selective limiting is not uniformly better or worse than flat gain; it is better for the meter whose weight is large where the processor cuts. H.870 chose A. These remain digital-domain proxies. \textbf{HC is supported.}
+The same matched-LUFS pairs were re-scored with $L_{Ceq}$ (same RMS-plus-offset helper; not ear-level sound pressure). The hypothesis, written before looking, was HC above. C at 40\,Hz is about $-2$\,dB; A is about $-35$\,dB (Fig.~\ref{fig:cw}). On $n=20$, S1 mean $\Delta L_{Aeq}=+1.17$\,dB but mean $\Delta L_{Ceq}=-0.58$\,dB (bootstrap 95\% CI $[-0.94,\,-0.26]$; two-sided Wilcoxon $p=1.0\times 10^{-4}$). S2 mean $\Delta L_{Aeq}=-0.27$\,dB but mean $\Delta L_{Ceq}=+0.06$\,dB (CI $[0.02,\,0.12]$; $p=0.007$). Both sign predictions hold. Frequency-selective limiting is not uniformly better or worse than flat gain; it is better for the meter whose weight is large where the processor cuts. H.870 chose A. These remain digital-domain proxies. \textbf{HC is supported.}
+
+\begin{figure}[!t]
+\centering
+\includegraphics[width=\columnwidth]{cweighting_response.png}
+\caption{Digital C-weighting IIR versus the IEC analytic curve. Near 40\,Hz, C is a few dB down while A is about $-35$\,dB, which is why S1 and S2 swap sign between $L_{Aeq}$ and $L_{Ceq}$. This remains a digital proxy, not a workplace meter.}
+\label{fig:cw}
+\end{figure}
 
 \subsection{S1 at matched exposure}
 

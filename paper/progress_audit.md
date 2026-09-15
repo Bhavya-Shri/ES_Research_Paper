@@ -5,7 +5,7 @@
 **Background plan:** `paper/publishing_audit_and_roadmap.md` (13 Sep; still the venue/novelty strategy)  
 **Paper walkthrough:** `paper/walkthrough_notes.md` (explains the *old* S1-only draft)
 
-This file is the status snapshot after Phase F Step 13 (literature close-out). It is not a substitute for the original publishing audit.
+This file is the status snapshot after Phase F Step 14 (venue lock). It is not a substitute for the original publishing audit. Portal submit waits for the DAFx 2027 CFP.
 
 **How this file is kept:** after every stretch, update *this* file before calling the step done, then commit it with the code/results and push `main`.
 
@@ -26,7 +26,7 @@ S1 loses at matched LUFS (+1.17 dB); S2 reverses the sign (−0.27 dB, bootstrap
 
 S1 remains the failed heuristic on purpose. S2 knobs are frozen (`sub_atten_db=0`, `harmonic_mix=0`, `mid_target_dba=72`).
 
-**Paper vs data:** `main.tex` is version C. Claim vocabulary was searched; remaining hits are denials or calibrated-proxy disclaimers. Related work now also cites US~11006215 and AES TD1008. No `pdflatex` on this machine; the IEEEtran PDF is an Overleaf compile of `main.tex`. The old fpdf file `Frequency_Adaptive_Audio_Limiting.pdf` is removed so it cannot be submitted by mistake.
+**Paper vs data:** `main.tex` is version C. Claim vocabulary was searched; remaining hits are denials or calibrated-proxy disclaimers. Related work also cites US~11006215 and AES TD1008. First venue is **DAFx 2027** (Cremona, 24–27 Aug 2027). No `pdflatex` on this machine; the PDF is an Overleaf compile of `main.tex`. The old fpdf file `Frequency_Adaptive_Audio_Limiting.pdf` is removed so it cannot be submitted by mistake.
 
 **Git:** https://github.com/Bhavya-Shri/ES_Research_Paper.git — branch `main`. This file is updated after every stretch and pushed with that stretch.
 
@@ -50,7 +50,7 @@ S1 remains the failed heuristic on purpose. S2 knobs are frozen (`sub_atten_db=0
 | **11 Rewrite `main.tex`** | **E** | **Done** | version C; S0/S1/S2; S2 figure; C paragraph; modest margin |
 | **12 Compile / claim check** | **E** | **Done** (source check; no local `pdflatex`) | claim hits qualified; stale fpdf PDF removed; IEEE PDF is Overleaf |
 | **13 IEEE Xplore + AES close-out** | **F** | **Done** | no clone of the matched LUFS/\(L_{Aeq}\) test; added US~11006215 and AES TD1008 |
-| 14 Venue + submit | F | **Next** | reversal story is clean enough for conference / AES |
+| **14 Venue lock** | **F** | **Done** (portal submit waits) | **DAFx 2027** locked; do not rush ICASSP 2027 4+1 |
 
 **Do not skip to hardware, extra clips, MUSHRA, or ML.** Those wait until after Step 12.
 
@@ -165,7 +165,41 @@ Search method: web + Google Patents + AES public document pages + Scholar-style 
 
 **Looked at, not cited:** Cassidy ICASSP 2004 (loudness-model DRC); US~11268848 (later headset dosimetry, same family as US~6826515).
 
-### 2.6 Artifacts that exist (Steps 0–13)
+### 2.9 Step 14 venue lock (16 Sep 2026)
+
+S2 reversed the sign. There is no listening test. §6 of the publishing audit says: aim a specialist conference with version C; do **not** wait for a coupler; do **not** aim TASLP / AES Journal.
+
+**Locked primary: DAFx 2027** (30th International Conference on Digital Audio Effects), Politecnico di Milano campus, Cremona, 24–27 Aug 2027. Specialist audio audience (LUFS, virtual bass, weighting). Historical length ~8 pages. CFP not posted yet (DAFx 2026 was due 30 Mar 2026). Keep `IEEEtran` as the working manuscript; retarget the DAFx template when the CFP appears.
+
+**Do not rush ICASSP 2027.** Deadline 23 Sep 2026 AoE (Kolkata 17:30 on 24 Sep). Format is 4 pages + optional 5th for references only. This draft is `\documentclass[journal]{IEEEtran}` with C-weighting, ablation, and the S1 failure story. A same-week 4-page cut would be a different paper. The S2 margin is −0.27 dB on a digital proxy with no listeners; that is a weak ICASSP AASP bet.
+
+| Target | Window | Decision |
+|---|---|---|
+| DAFx 2027 | CFP expected ~Mar 2027; event 24–27 Aug 2027 | **Submit here** |
+| ICASSP 2027 | 23 Sep 2026 AoE; 4+1 pages; Toronto May 2027 | Skip this cycle |
+| IEEE SPL | Rolling; 4 pages + 1 refs | Only after a dedicated letter cut |
+| WASPAA 2027 | Autumn 2027; typically 4+1; CFP early 2027 | Later if DAFx misses |
+| Next AES convention | 6–10 pages; Nashville 161 closed 17 Jul 2026 | Later if a 2027 CFP appears first |
+| INDICON 2026 / TENCON 2026 | Closed | — |
+
+**Author checklist (source, 16 Sep):**
+
+| Item | Status |
+|---|---|
+| Captions stand alone | Yes |
+| No ear-level dB SPL claim | Yes (limitations deny it) |
+| Claim hits (SPL, hearing loss, architecture, quality, optimal, adaptive) | Qualified or absent as claims |
+| Numbers from `results/tables/` | Yes |
+| Ethics / listeners | N/A (no listening test) |
+| IEEE-style bibliography | Yes (`IEEEtran`) |
+| Second author e-mail | **Missing** — add Bhavya's VIT address before the portal |
+| Compiled IEEE/DAFx PDF | **Overleaf** — no local `pdflatex` |
+| Internal read (coauthor + outsider: “what is the contribution?”) | **User** — if they say “a new limiter,” rewrite |
+| ORCID (ICASSP 2027 requires it; DAFx may not) | Get one anyway |
+
+`cweighting_response.png` is now cited in the C-weighting results subsection.
+
+### 2.6 Artifacts that exist (Steps 0–14)
 
 | Artifact | Role |
 |---|---|
@@ -195,11 +229,15 @@ Search method: web + Google Patents + AES public document pages + Scholar-style 
 
 ## 3. What must be done next (in order)
 
-Do these **in roadmap order**. Do not retune mid target 72 after seeing \(\Delta\). After each step, update this file and push.
+Venue is locked. Do not retune mid target 72. After each stretch, update this file and push.
 
-### Immediate — Step 14 (next stretch)
+### Immediate — portal submit (waits on DAFx CFP)
 
-Venue + submit. Reversal story is clean enough for a conference / AES first submission. Do **not** wait for a coupler or listening test. Compile `main.tex` on Overleaf (no local `pdflatex`). Pick venue, page limit, and author checklist from `publishing_audit_and_roadmap.md` §6 / Phase 8.
+1. Compile `paper/main.tex` on Overleaf and keep that PDF with the git tag.  
+2. Add Bhavya's e-mail to the author block.  
+3. Internal read: one coauthor, one outsider. If they say “a new limiter,” rewrite.  
+4. When the DAFx 2027 CFP posts, copy into their template (likely ~8 pages, maybe double-blind) and submit.  
+5. Do **not** cut a 4-page ICASSP version this week.
 
 ---
 
@@ -245,4 +283,4 @@ S1 freeze (do not overwrite as the source of truth): `results/frozen/draft-negat
 
 ## 7. Next action
 
-**Step 14.** When you say go: venue + submit. Do not retune knobs. Compile `paper/main.tex` on Overleaf for the IEEE PDF.
+**Portal submit.** When the DAFx 2027 CFP posts: retarget their template, compile on Overleaf, add Bhavya's e-mail, then submit. Do not retune knobs. Do not cut a 4-page ICASSP version this week.

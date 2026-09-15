@@ -208,13 +208,15 @@ Queries in the audit file §8 Phase 7. Add anything that is a real neighbour.
 
 **Status:** done. No clone of the matched LUFS vs digital \(L_{Aeq}\) allocation test on music. Added US~11006215 (GN Hearing multiband HPD limiter) and AES TD1008 (streaming LUFS; notes H.870 / EN 50332-3). Search log is in `progress_audit.md` §2.8.
 
-### Step 14 — Venue + submit  ← **NEXT**
+### Step 14 — Venue + submit
 
 - Student / regional IEEE if S2 was not run or is messy.  
 - Conference / AES if S2 story is clean (reversal **or** cannot-game).  
 - Do **not** wait for ear simulator or MUSHRA for that first submission.
 
 **Last step:** submitted PDF + frozen code/results that regenerate every number.
+
+**Status:** venue locked 16 Sep 2026. **Primary: DAFx 2027** (Cremona, 24–27 Aug 2027). Do not rush ICASSP 2027 (4+1 pages, 23 Sep 2026 AoE). Author checklist is in `progress_audit.md` §2.9. Portal submit waits for the DAFx CFP. Compile `main.tex` on Overleaf. Add Bhavya's e-mail before the portal.
 
 ---
 
@@ -250,6 +252,6 @@ Those are a **second** paper or a journal extension.
 | 11 Rewrite tex | **Done** (version C in `main.tex`) |
 | 12 Compile pass | **Done** (tex claim check; Overleaf for IEEE PDF) |
 | 13 Xplore search | **Done** (US~11006215, AES TD1008; no clone of the matched test) |
-| 14 Submit | **Next** |
+| 14 Venue lock | **Done** (DAFx 2027; portal submit waits on CFP) |
 
-When you say go, we start at **Step 14** (venue + submit). Compile `main.tex` on Overleaf for the IEEE PDF. Do not skip to extra clips, MUSHRA, HATS, or ML.
+Roadmap steps 0–14 venue lock are done. Portal submit is the remaining action: wait for the DAFx 2027 CFP, retarget their template, compile on Overleaf. Do not skip to extra clips, MUSHRA, HATS, or ML. Do not cut a 4-page ICASSP version this week.
