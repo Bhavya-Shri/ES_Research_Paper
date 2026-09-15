@@ -318,6 +318,10 @@ A-weighting at 40\,Hz is approximately $-35$\,dB (Fig.~\ref{fig:aw}). BS.1770 K-
 
 This is not a crossover bug. Reconstruction is flat (Fig.~\ref{fig:xo}), harmonics are present at 40\,Hz (Fig.~\ref{fig:harm}), and block streaming matches whole-signal processing. The negative result is a metric mismatch, not an implementation failure.
 
+\subsection{C-weighting dependence}
+
+The same matched-LUFS pairs were re-scored with an IEC~61672 C-weighted digital proxy $L_{Ceq}$ (same RMS-plus-offset helper as $L_{Aeq}$; not ear-level SPL). The hypothesis, written before looking, was that the bass-first system (S1) should look better on $L_{Ceq}$ than on $L_{Aeq}$, because C still counts the bass that S1 removes, and that a frozen mid-cut config with no shelf (S2) should do the opposite. C at 40\,Hz is about $-2$\,dB; A is about $-35$\,dB. On $n=20$, S1 mean $\Delta L_{Aeq}=+1.17$\,dB but mean $\Delta L_{Ceq}=-0.58$\,dB (bootstrap 95\% CI $[-0.94,\,-0.26]$; two-sided Wilcoxon $p=1.0\times 10^{-4}$). S2 mean $\Delta L_{Aeq}=-0.27$\,dB but mean $\Delta L_{Ceq}=+0.06$\,dB (CI $[0.02,\,0.12]$; $p=0.007$). Both sign predictions hold. Frequency-selective limiting is not uniformly better or worse than flat gain; it is better for the meter whose weight is large where the processor cuts. These remain digital-domain proxies.
+
 \subsection{Matched exposure: loudness and spectral distance}
 
 Fig.~\ref{fig:h1} is the dual view. At equal digital $L_{Aeq}$, the proposed output is quieter by 1.17\,dB LUFS on average---exactly the opposite sign of Fig.~\ref{fig:h2}, as expected for a frequency-flat baseline. \textbf{H1 is not supported as a loudness-preservation claim.} At the same A-weighted proxy, turning the whole signal down keeps more LUFS than cutting sub-bass.

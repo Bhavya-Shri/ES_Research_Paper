@@ -10,7 +10,7 @@ import numpy as np
 
 from .checks import run_all_checks
 from .experiment import load_corpus, run_experiment
-from .stats import interpret_s2_mean, load_comparison, run_s1_stats, run_s2_stats
+from .stats import interpret_s2_mean, load_comparison, run_cweight_stats, run_s1_stats, run_s2_stats
 from .io import load_mono, save_wav
 from .limiter import BroadbandExposureLimiter
 from .metrics import clip_metrics, laeq_proxy, log_spectral_distance
@@ -101,6 +101,20 @@ def cmd_stats(_: argparse.Namespace) -> None:
     _print_json(out)
 
 
+def cmd_cweight(_: argparse.Namespace) -> None:
+    payload = run_cweight_stats()
+    slim = {k: v for k, v in payload.items() if k != "per_clip"}
+    if "s1" in slim and isinstance(slim["s1"], dict):
+        slim["s1"] = {k: v for k, v in slim["s1"].items() if k != "stats"} | {
+            "n20": slim["s1"]["stats"]["n20"]
+        }
+    if "s2" in slim and isinstance(slim["s2"], dict):
+        slim["s2"] = {k: v for k, v in slim["s2"].items() if k != "stats"} | {
+            "n20": slim["s2"]["stats"]["n20"]
+        }
+    _print_json(slim)
+
+
 def cmd_list_corpus(_: argparse.Namespace) -> None:
     clips = load_corpus()
     _print_json({"clips": {k: len(v) for k, v in clips.items()}})
@@ -123,6 +137,10 @@ def main(argv: list[str] | None = None) -> None:
     sub.add_parser("experiment", help="Matched-exposure and matched-loudness comparison").set_defaults(func=cmd_experiment)
     sub.add_parser("sweep", help="Mid-band target/ratio sweep on the synthetic debug signal").set_defaults(func=cmd_sweep)
     sub.add_parser("stats", help="Wilcoxon/bootstrap on frozen matched-LUFS ΔLAeq").set_defaults(func=cmd_stats)
+    sub.add_parser(
+        "cweight",
+        help="IEC C-weighting ΔLCeq at frozen matched-LUFS gains (does not retune knobs)",
+    ).set_defaults(func=cmd_cweight)
     sub.add_parser("corpus", help="List loaded clips").set_defaults(func=cmd_list_corpus)
     sp = sub.add_parser("process", help="Process one wav: original / limiter / proposed")
     sp.add_argument("input")

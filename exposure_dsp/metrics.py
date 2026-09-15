@@ -12,6 +12,7 @@ import numpy as np
 from scipy import signal
 
 from .aweighting import AWeightingFilter
+from .cweighting import CWeightingFilter
 from .kweighting import digital_k_weighting_sos
 
 try:
@@ -38,6 +39,16 @@ def laeq_proxy(x: np.ndarray, fs: float, db_ref: float = 94.0) -> float:
     filt = AWeightingFilter(fs)
     xa = filt.process(np.asarray(x, dtype=float))
     return 20.0 * np.log10(rms(xa)) + db_ref
+
+
+def lceq_proxy(x: np.ndarray, fs: float, db_ref: float = 94.0) -> float:
+    """C-weighted digital RMS + the same arbitrary offset as laeq_proxy.
+
+    Not calibrated ear-level SPL. C counts bass that A discards.
+    """
+    filt = CWeightingFilter(fs)
+    xc = filt.process(np.asarray(x, dtype=float))
+    return 20.0 * np.log10(rms(xc)) + db_ref
 
 
 def _k_weighted_ungated(x: np.ndarray, fs: float) -> float:
@@ -91,6 +102,7 @@ def thd_db(x: np.ndarray, fs: float, f0: float, n_harm: int = 8) -> float:
 def clip_metrics(x: np.ndarray, y: np.ndarray | None, fs: float, db_ref: float = 94.0) -> dict[str, Any]:
     out: dict[str, Any] = {
         "laeq_proxy": laeq_proxy(x, fs, db_ref),
+        "lceq_proxy": lceq_proxy(x, fs, db_ref),
         "lufs": lufs(x, fs),
         "crest_db": crest_factor_db(x),
         "peak": peak(x),
@@ -99,5 +111,6 @@ def clip_metrics(x: np.ndarray, y: np.ndarray | None, fs: float, db_ref: float =
     if y is not None:
         out["lsd_vs_ref"] = log_spectral_distance(y, x, fs)
         out["dlaeq_vs_ref"] = out["laeq_proxy"] - laeq_proxy(y, fs, db_ref)
+        out["dlceq_vs_ref"] = out["lceq_proxy"] - lceq_proxy(y, fs, db_ref)
         out["dlufs_vs_ref"] = out["lufs"] - lufs(y, fs)
     return out

@@ -160,7 +160,7 @@ Wilcoxon/CI for S2 deltas; optional paired S1 vs S2.
 
 ## Phase D — One extra meter (cheap, high insight)
 
-### Step 10 — C-weighting proxy  ← **NEXT**
+### Step 10 — C-weighting proxy
 
 **Implement:** `exposure_dsp/cweighting.py` (IEC 61672 C), same RMS+offset helper as A.
 
@@ -168,11 +168,13 @@ Wilcoxon/CI for S2 deltas; optional paired S1 vs S2.
 
 **Done when:** comparison table has a C-weighted column or a small extra JSON; one Results paragraph.
 
+**Status:** done. `cweighting.py` + `lceq_proxy`. `python -m exposure_dsp cweight` → `stats_cweight.json`, `comparison_cweight.csv`. A-deltas reproduced to 0 dB. S1 \(\Delta L_{Ceq}=-0.58\) dB (A was +1.17); S2 \(\Delta L_{Ceq}=+0.06\) dB (A was −0.27). Both hypotheses held. One Results paragraph in `main.tex`. Knobs not retuned.
+
 ---
 
 ## Phase E — Rewrite the paper to match the data
 
-### Step 11 — `main.tex` structure for version C
+### Step 11 — `main.tex` structure for version C  ← **NEXT**
 
 1. Intro contribution: matched test; S1 fails; allocation must follow \(w_A\); S2 {did / did not} reverse the sign.  
 2. Related work: patents + Liang (Step 3).  
@@ -238,10 +240,10 @@ Those are a **second** paper or a journal extension.
 | 7 Sign gate | **Done** — reversal; S2 knobs frozen at mid target 72 |
 | 8 Figures | **Done** (`matched_loudness_s1_s2.png`; `perclip_table.tex` S1+S2) |
 | 9 Stats S2 | **Done** (`stats_s2.json`; CI excludes 0) |
-| 10 C-weighting | **Next** |
-| 11 Rewrite tex | Not started |
+| 10 C-weighting | **Done** (`stats_cweight.json`; S1 −0.58 dB, S2 +0.06 dB) |
+| 11 Rewrite tex | **Next** |
 | 12 Compile pass | Not started |
 | 13 Xplore search | Not started |
 | 14 Submit | Not started |
 
-When you say go, we start at **Step 10** (C-weighting). Do not skip to extra clips, MUSHRA, HATS, or ML.
+When you say go, we start at **Step 11** (rewrite `main.tex`). Do not skip to extra clips, MUSHRA, HATS, or ML.

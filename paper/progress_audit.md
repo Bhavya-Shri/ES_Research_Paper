@@ -5,7 +5,7 @@
 **Background plan:** `paper/publishing_audit_and_roadmap.md` (13 Sep; still the venue/novelty strategy)  
 **Paper walkthrough:** `paper/walkthrough_notes.md` (explains the *old* S1-only draft)
 
-This file is the status snapshot after Phase A–C through Step 9. It is not a substitute for the original publishing audit.
+This file is the status snapshot after Phase A–D through Step 10 (C-weighting). It is not a substitute for the original publishing audit.
 
 **How this file is kept:** after every stretch, update *this* file before calling the step done, then commit it with the code/results and push `main`.
 
@@ -15,20 +15,20 @@ This file is the status snapshot after Phase A–C through Step 9. It is not a s
 
 We are in **version C** of the publishing plan: three systems, matched LUFS vs digital \(L_{Aeq}\), with a **reversal**.
 
-| System | What it is | Mean \(\Delta L_{Aeq}\) at matched LUFS | Dual mean \(\Delta\)LUFS at matched \(L_{Aeq}\) |
-|---|---|---|---|
-| **S0** | Frequency-flat gain | Baseline (0 by construction) | 0 |
-| **S1** | Bass-first heuristic (−12 dB shelf + harmonics + mid target 78) | **+1.17 dB** (worse than S0) | **−1.17 dB** |
-| **S2** | Metric-aligned (`ProposedConfig.aligned()`: no shelf, no harmonics, mid target **72**) | **−0.27 dB** (better than S0) | **+0.27 dB** |
+| System | What it is | \(\Delta L_{Aeq}\) matched LUFS | Dual \(\Delta\)LUFS matched \(L_{Aeq}\) | \(\Delta L_{Ceq}\) matched LUFS |
+|---|---|---|---|---|
+| **S0** | Frequency-flat gain | 0 | 0 | 0 |
+| **S1** | Bass-first heuristic (−12 dB shelf + harmonics + mid target 78) | **+1.17 dB** (worse than S0) | **−1.17 dB** | **−0.58 dB** (better than S0) |
+| **S2** | Metric-aligned (`ProposedConfig.aligned()`: no shelf, no harmonics, mid target **72**) | **−0.27 dB** (better than S0) | **+0.27 dB** | **+0.06 dB** (slightly worse than S0) |
 
 **Contribution sentence (locked by Step 7):**  
 S1 loses at matched LUFS (+1.17 dB); S2 reverses the sign (−0.27 dB, bootstrap 95% CI [−0.45, −0.11], two-sided Wilcoxon \(p=0.001\)), so attenuation spent where \(w_A\) is large beats flat gain on the digital \(L_{Aeq}\) proxy. The margin is modest. **Do not retune S1 or S2 knobs.**
 
 S1 remains the failed heuristic on purpose. S2 knobs are frozen (`sub_atten_db=0`, `harmonic_mix=0`, `mid_target_dba=72`).
 
-**Paper vs data:** figures and `perclip_table.tex` now show S1 and S2. `paper/main.tex` still tells the **S1-only** story (plus Phase B citations, title, stats, and the \(W_A/W_K\) figure). It does **not** yet report S2. That rewrite is Step 11, after optional C-weighting (Step 10).
+**Paper vs data:** figures and `perclip_table.tex` show S1 and S2. `main.tex` is still mostly the S1-only draft, plus a Step 10 C-weighting Results paragraph that also reports S2 \(\Delta L_{Ceq}\). The full version-C rewrite is Step 11.
 
-**Git:** https://github.com/Bhavya-Shri/ES_Research_Paper.git — branch `main`. Tracked work through Step 9 is on origin (`11ae90e` initial tree; `548c44c` Step 8 figures/table). This file is updated after every stretch and pushed with that stretch.
+**Git:** https://github.com/Bhavya-Shri/ES_Research_Paper.git — branch `main`. This file is updated after every stretch and pushed with that stretch.
 
 ---
 
@@ -46,8 +46,8 @@ S1 remains the failed heuristic on purpose. S2 knobs are frozen (`sub_atten_db=0
 | 7 Sign gate | C | **Done** | Reversal; S2 knobs frozen; story recorded in `working_roadmap.md` |
 | 8 Three-way figures | C | **Done** | `paper/figures/matched_loudness_s1_s2.png`; `perclip_table.tex` means +1.17 / −0.27 dB |
 | 9 Stats S2 | C | **Done** (required part ran with Step 7) | `results/tables/stats_s2.json`; CI excludes 0. Optional paired S1 vs S2 test **not** implemented |
-| 10 C-weighting | D | **Next** | no `cweighting.py` |
-| 11 Rewrite `main.tex` | E | Not started as version C | Results still S1-only |
+| **10 C-weighting** | **D** | **Done** | `exposure_dsp/cweighting.py`; `stats_cweight.json`; S1 ΔLCeq −0.58 dB, S2 +0.06 dB; both hypotheses held |
+| 11 Rewrite `main.tex` | E | **Next** | still mostly S1-only; C paragraph is in |
 | 12 Compile / claim check | E | Not started | |
 | 13 IEEE Xplore + AES close-out | F | Not started | web/patent pass only |
 | 14 Venue + submit | F | Not started | |
@@ -101,7 +101,22 @@ Counts n=20: 12 worse by >0.05 dB, 6 ties, 2 better. One-sided H2 (\(\Delta<0\))
 
 Counts n=20: 11 better by >0.05 dB, 8 ties, 1 slightly worse. One-sided H2 (\(\Delta<0\)) is supported for S2 (\(p=6\times10^{-4}\)) and rejected for S1.
 
-### 2.4 What the paper file currently contains
+### 2.4 Phase D — C-weighting (Step 10)
+
+- `exposure_dsp/cweighting.py`: IEC 61672 C, same IIR + RMS+offset pattern as A. Digital C at 40 Hz ≈ **−2.0 dB** (A ≈ −34.5 dB). Check passed.
+- `lceq_proxy` in `metrics.py`. `python -m exposure_dsp cweight` re-processes S1/S2 in float and rebuilds LUFS-matched flats from `comparison.csv` gain (saved wavs are not used: PCM_16 peak-normalizes if \(|x|>1\)). A-deltas reproduced to **0.0 dB**. Knobs not retuned.
+- Hypothesis (written before looking): S1 \(\Delta L_{Ceq} < \Delta L_{Aeq}\); S2 the opposite. **Both held.**
+
+**Matched LUFS \(\Delta L_{Ceq}\) (processor − flat):**
+
+| System | n=20 mean | 95% CI | Two-sided Wilcoxon | vs \(\Delta L_{Aeq}\) |
+|---|---|---|---|---|
+| S1 | **−0.58 dB** | [−0.94, −0.26] | \(p=1.0\times10^{-4}\) | A was **+1.17 dB** (sign flip) |
+| S2 | **+0.06 dB** | [0.02, 0.12] | \(p=0.007\) | A was **−0.27 dB** (sign flip) |
+
+S1 16-real \(\Delta L_{Ceq}\) −0.40 dB; S2 16-real +0.08 dB. Lesson: allocation is good for the meter you cut toward. Do not write this as a safety result.
+
+### 2.5 What the paper file currently contains
 
 Already in `main.tex` from Phase B:
 
@@ -110,12 +125,13 @@ Already in `main.tex` from Phase B:
 - Gap-table rows for Chen 2023, the two patents, Fathima 2026.
 - \(W_A/W_K\) figure next to the A-weighting check figure.
 - S1 Wilcoxon/CI sentence.
+- Step 10: one Results paragraph on C-weighting (S1 and S2 \(\Delta L_{Ceq}\)).
 
-**Missing from `main.tex`:** S2, three-system methods, reversal result, `\includegraphics` of `matched_loudness_s1_s2.png` / updated `perclip_table.tex`, optional C-weighting, version-C title/contribution bullets. Figures exist; they are not wired into the tex yet.
+**Missing from `main.tex`:** three-system methods, S2 grouped-bar figure, version-C title/contribution bullets, wiring of `matched_loudness_s1_s2.png` / the four-column `perclip_table.tex`. The C paragraph mentions S2 numbers ahead of the full rewrite.
 
 `paper/Frequency_Adaptive_Audio_Limiting.pdf` is still on GitHub (old filename). Do not treat it as the current paper; the live source is `main.tex`.
 
-### 2.5 Artifacts that exist (Steps 0–9)
+### 2.6 Artifacts that exist (Steps 0–10)
 
 | Artifact | Role |
 |---|---|
@@ -133,6 +149,9 @@ Already in `main.tex` from Phase B:
 | `paper/figures/matched_loudness_s1_s2.png` | Grouped bars |
 | `paper/perclip_table.tex` | S1 and S2 \(\Delta L_{Aeq}\) / \(\Delta\)LUFS |
 | `paper/references.bib` | Chen2023, US9980028, US6826515, Fathima2026 |
+| `exposure_dsp/cweighting.py` | IEC C IIR + analytic curve |
+| `results/tables/stats_cweight.json`, `comparison_cweight.csv` | \(\Delta L_{Ceq}\) at matched LUFS |
+| `paper/figures/cweighting_response.png` | Digital C vs IEC analytic |
 
 **On GitHub:** code, paper tex/bib/figures, `results/tables/**`, `results/frozen/**`.  
 **Not on GitHub (`.gitignore`):** `audio_in/*.wav`, `results/wavs`, `results/figures`, venv, `paper/_pdfdeps/`.
@@ -143,15 +162,9 @@ Already in `main.tex` from Phase B:
 
 Do these **in roadmap order**. Do not retune mid target 72 after seeing \(\Delta\). After each step, update this file and push.
 
-### Immediate — Step 10 (next coding stretch)
+### Immediate — Step 11 (next coding stretch)
 
-C-weighting proxy. **Hypothesis, already on the record:** at matched LUFS, S1 should look better on \(L_{Ceq}\) than on \(L_{Aeq}\) (bass cuts count for C); S2 the opposite.
-
-Step 8 is done (`matched_loudness_s1_s2.png`, `perclip_table.tex`). Step 9 required JSON is done (`stats_s2.json`). Optional extra: paired S1 vs S2 test; not required to proceed.
-
-### Then — Steps 11–12 (the actual paper)
-
-Rewrite toward version C:
+Rewrite `main.tex` toward version C: S0/S1/S2 methods, keep the +1.17 dB S1 story, add S2 figure/stats, keep the C-weighting paragraph, modest-margin language. Do not retune knobs.
 
 1. Title may become *Metric-Aligned Frequency Allocation for Personal-Audio Dose Limiting* (roadmap §3.1 option 3), or keep the mismatch title and add S2 in the abstract.
 2. Intro: matched test; S1 fails; allocation follows \(w_A\); S2 reversed the sign.
@@ -160,7 +173,7 @@ Rewrite toward version C:
 5. Limitations: still a digital proxy; mid cut may hurt speech; no MUSHRA.
 6. Every number from `results/tables/`. Compile; search for SPL / hearing loss / quality / novel architecture / optimal / adaptive.
 
-### Then — Steps 13–14 (submit)
+### Then — Steps 12–14 (compile and submit)
 
 IEEE Xplore + AES neighbour search; pick a conference/AES venue (reversal story is clean enough). Do **not** wait for a coupler or listening test for the first submission.
 
@@ -187,6 +200,8 @@ IEEE Xplore + AES neighbour search; pick a conference/AES venue (reversal story 
 | Quality / SPL language | Still forbidden. Digital \(L_{Aeq}\) proxy only. |
 | p-hacking S2 | Mid target 72 was frozen before the 20-clip mean. Leave it. |
 | Stale PDF on GitHub | `Frequency_Adaptive_Audio_Limiting.pdf` is the old filename; `main.tex` is the source of truth. |
+| C-weighting oversell | S1 on C is a real sign flip (−0.58 dB); S2 on C is only +0.06 dB. Write meter-dependence, not “C is the right safety meter.” |
+| Saved wavs vs tables | `save_wav` peak-normalizes if \|x\|>1. C-weighting used float re-process + CSV gains, not those wavs. |
 
 ---
 
@@ -197,6 +212,7 @@ python -m exposure_dsp checks          # includes weighting-ratio figure
 python -m exposure_dsp stats           # stats_s1.json + stats_s2.json from comparison.csv
 python -m exposure_dsp experiment      # full S1+S2 comparison (slow; ablation on by default)
 python paper/make_figures.py           # S1 + S2 grouped bars and perclip_table.tex
+python -m exposure_dsp cweight         # stats_cweight.json from frozen knobs + CSV gains
 ```
 
 S1 freeze (do not overwrite as the source of truth): `results/frozen/draft-negative-v1/`.
@@ -205,4 +221,4 @@ S1 freeze (do not overwrite as the source of truth): `results/frozen/draft-negat
 
 ## 7. Next action
 
-**Step 10.** When you say go: IEC 61672 C-weighting proxy (`exposure_dsp/cweighting.py`), same RMS+offset helper as A; add a C-weighted column or small JSON; one Results paragraph after looking. Hypothesis is already written: S1 should look better on \(L_{Ceq}\) than on \(L_{Aeq}\); S2 the opposite. Do not retune knobs. Update this file after that run.
+**Step 11.** When you say go: rewrite `main.tex` to version C (S0/S1/S2, reversal, C-weighting already drafted). Every number from `results/tables/`. Do not retune knobs. Update this file after that pass.

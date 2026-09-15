@@ -8,6 +8,7 @@ import numpy as np
 from scipy import signal
 
 from .aweighting import a_weight_db_iec, digital_a_weighting_ba
+from .cweighting import c_weight_db_iec, digital_c_weighting_ba
 from .crossover import LinkwitzRileyCrossover3Way
 from .kweighting import marker_table, plot_weighting_ratio
 from .limiter import BroadbandExposureLimiter, PeakCeilingLimiter
@@ -167,6 +168,42 @@ def check_aweighting(fs: float = 48000.0) -> dict[str, Any]:
     return {"passed": passed, "points": rows, "figure": str(fig)}
 
 
+def check_cweighting(fs: float = 48000.0) -> dict[str, Any]:
+    b, a = digital_c_weighting_ba(fs)
+    w, h = signal.freqz(b, a, worN=4096, fs=fs)
+    h_db = 20.0 * np.log10(np.abs(h) + 1e-15)
+    h1000 = np.interp(1000.0, w, h_db)
+    h_db = h_db - h1000
+    ref = c_weight_db_iec(w)
+    freqs = np.array([31.5, 40.0, 100.0, 500.0, 1000.0, 4000.0, 8000.0], dtype=float)
+    rows = []
+    for f in freqs:
+        d = float(np.interp(f, w, h_db) - c_weight_db_iec(f))
+        rows.append({"freq": float(f), "EA_db": d, "c_db": float(np.interp(f, w, h_db))})
+
+    plt.figure(figsize=(8.2, 4.2))
+    plt.semilogx(w, ref, label="IEC analytic")
+    plt.semilogx(w, h_db, label="Digital IIR (normalized at 1 kHz)", ls="--")
+    plt.xlim(20, 20000)
+    plt.ylim(-15, 5)
+    plt.xlabel("Frequency (Hz)")
+    plt.ylabel("C-weighting (dB)")
+    plt.grid(True, which="both", alpha=0.3)
+    plt.legend()
+    fig = savefig("cweighting_response.png")
+    c40 = float(np.interp(40.0, w, h_db))
+    a40 = float(a_weight_db_iec(40.0))
+    mid_err = [r["EA_db"] for r in rows if 100.0 <= r["freq"] <= 4000.0]
+    passed = (max(abs(v) for v in mid_err) < 0.3) and (c40 > a40 + 20.0)
+    return {
+        "passed": passed,
+        "points": rows,
+        "c_40hz_db": c40,
+        "a_40hz_db": a40,
+        "figure": str(fig),
+    }
+
+
 def check_weighting_ratio(fs: float = 48000.0) -> dict[str, Any]:
     """A at ~40 Hz ≈ −35 dB; K is much less severe there. Writes weighting_ratio.png."""
     from pathlib import Path
@@ -214,6 +251,7 @@ def run_all_checks(fs: float = 48000.0) -> dict[str, Any]:
         "crossover": check_crossover(fs),
         "harmonics": check_harmonics(fs),
         "aweighting": check_aweighting(fs),
+        "cweighting": check_cweighting(fs),
         "weighting_ratio": check_weighting_ratio(fs),
         "streaming": check_streaming(fs),
     }

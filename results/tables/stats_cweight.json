@@ -1,0 +1,355 @@
+{
+  "hypothesis": {
+    "registered_before_looking": true,
+    "s1": "At matched LUFS, S1 \u0394LCeq should be lower (better) than S1 \u0394LAeq, because C counts the bass that the S1 shelf removes.",
+    "s2": "S2 should do the opposite: \u0394LCeq should be higher (worse) than \u0394LAeq, because S2 cuts mids that A weights more than C."
+  },
+  "knobs_frozen": true,
+  "source": "Re-process S1/S2 in float; LUFS-matched flats from comparison.csv gain. Not a knob retune. Saved wavs are not used (PCM_16 peak-normalize if |x|>1).",
+  "reprocess_vs_csv_max_abs_dlaeq_s1": 0.0,
+  "reprocess_vs_csv_max_abs_dlaeq_s2": 0.0,
+  "s1": {
+    "mean_dlaeq_db": 1.1744548337216092,
+    "mean_dlceq_db": -0.5752137191745952,
+    "dlceq_minus_dlaeq_db": -1.7496685528962044,
+    "hypothesis": "\u0394LCeq < \u0394LAeq (bass cut should count on C)",
+    "supported": true,
+    "stats": {
+      "system": "proposed",
+      "metric": "dlceq_at_matched_lufs",
+      "sign": "positive means processor worse than flat gain on digital LCeq",
+      "n20": {
+        "label": "all_20",
+        "n": 20,
+        "mean_dlaeq_db": -0.5752137191745952,
+        "median_dlaeq_db": -0.27407371876250153,
+        "std_dlaeq_db": 0.7859008732469096,
+        "bootstrap_95ci_lo": -0.9376786921044132,
+        "bootstrap_95ci_hi": -0.2646903420570462,
+        "cohens_d": -0.7319163761685731,
+        "rank_biserial": -0.8952380952380953,
+        "n_positive_gt_0p05": 1,
+        "n_negative_lt_m0p05": 13,
+        "n_tie_within_0p05": 6,
+        "one_sided_h2_less_statistic": 11.0,
+        "one_sided_h2_less_p": 5.245208740234375e-05,
+        "two_sided_statistic": 11.0,
+        "two_sided_p": 0.0001049041748046875
+      },
+      "n16_real": {
+        "label": "real_16",
+        "n": 16,
+        "mean_dlaeq_db": -0.3963780115294555,
+        "median_dlaeq_db": -0.2554799418015463,
+        "std_dlaeq_db": 0.535047471856339,
+        "bootstrap_95ci_lo": -0.6721930252714643,
+        "bootstrap_95ci_hi": -0.16763825400505739,
+        "cohens_d": -0.7408277440396607,
+        "rank_biserial": -0.8676470588235294,
+        "n_positive_gt_0p05": 1,
+        "n_negative_lt_m0p05": 10,
+        "n_tie_within_0p05": 5,
+        "one_sided_h2_less_statistic": 9.0,
+        "one_sided_h2_less_p": 0.0005035400390625,
+        "two_sided_statistic": 9.0,
+        "two_sided_p": 0.001007080078125
+      },
+      "bass_6": {
+        "label": "bass_6",
+        "n": 6,
+        "mean_dlaeq_db": -0.8306436387484671,
+        "median_dlaeq_db": -0.7359194730570024,
+        "std_dlaeq_db": 0.6624783301792888,
+        "bootstrap_95ci_lo": -1.3268758532087048,
+        "bootstrap_95ci_hi": -0.36687509070795227,
+        "cohens_d": -1.2538427310122993,
+        "rank_biserial": -1.0,
+        "n_positive_gt_0p05": 0,
+        "n_negative_lt_m0p05": 6,
+        "n_tie_within_0p05": 0,
+        "one_sided_h2_less_statistic": 0.0,
+        "one_sided_h2_less_p": 0.015625,
+        "two_sided_statistic": 0.0,
+        "two_sided_p": 0.03125
+      },
+      "non_bass_real": {
+        "label": "non_bass_real",
+        "n": 10,
+        "mean_dlaeq_db": -0.13581863519804854,
+        "median_dlaeq_db": -0.042055962473380504,
+        "std_dlaeq_db": 0.1792941628431263,
+        "bootstrap_95ci_lo": -0.24499986155769912,
+        "bootstrap_95ci_hi": -0.036698234437123035,
+        "cohens_d": -0.7575184436811992,
+        "rank_biserial": -0.6727272727272727,
+        "n_positive_gt_0p05": 1,
+        "n_negative_lt_m0p05": 4,
+        "n_tie_within_0p05": 5,
+        "one_sided_h2_less_statistic": 9.0,
+        "one_sided_h2_less_p": 0.0322265625,
+        "two_sided_statistic": 9.0,
+        "two_sided_p": 0.064453125
+      },
+      "per_clip": {
+        "165523__zemidlo__snare-roll-hit-crash": -0.279687871001741,
+        "179270__speedenza__poem-statue-of-jupiter-voice": -0.24250031707983055,
+        "189635__klankbeeld__choir-amen-130525_14": 0.031142672682122452,
+        "269906__theriavirra__02_crash_loud_cymbals__snares": -0.027558362065605024,
+        "380303__evanboyerman__various-male-command-voice-lines-mixed": -0.03584187378842785,
+        "431525__evanboyerman__british-soldiers-monologue-voice-actingmalevoice-over": -0.39539062785769374,
+        "479941__liezen3__men-choir": -0.005562615053676723,
+        "529808__logicogonist__bass-loop-and-drums-130-bpm": -0.43974553777051995,
+        "541260__bertsz__drum-and-bass-loop": -1.4296592803981127,
+        "627643__asiilanna__female-vocal": 0.05959885698834455,
+        "628213__josefpres__bass-loops-033-with-drums-long-loop-120-bpm": -0.09624623254359221,
+        "629137__holizna__funky-lofi-drum-loop-88-bpm": -0.2684595665232621,
+        "629139__holizna__boombap-drums-90-bpm": -1.7176578069118307,
+        "657761__kevp888__221029_2225_fr_malechoir": -0.04827005115833316,
+        "735157__jadis0x__simple-music-loop-bass-keys-drums": -1.032093408343485,
+        "739037__acoustiangel__acoustiangel": -0.4141161636456445,
+        "bass_heavy": -2.2310242101920608,
+        "mixed": -2.5339385745729857,
+        "speech_like": -0.01509467876491044,
+        "transient": -0.38216873549065866
+      },
+      "bootstrap": {
+        "n_boot": 10000,
+        "seed": 0,
+        "method": "percentile"
+      }
+    }
+  },
+  "s2": {
+    "mean_dlaeq_db": -0.2667045677627712,
+    "mean_dlceq_db": 0.06403650250354928,
+    "dlceq_minus_dlaeq_db": 0.3307410702663205,
+    "hypothesis": "\u0394LCeq > \u0394LAeq (mid cut should count less on C than on A)",
+    "supported": true,
+    "stats": {
+      "system": "aligned",
+      "metric": "dlceq_at_matched_lufs",
+      "sign": "positive means processor worse than flat gain on digital LCeq",
+      "n20": {
+        "label": "all_20",
+        "n": 20,
+        "mean_dlaeq_db": 0.06403650250354928,
+        "median_dlaeq_db": 0.01595778155119376,
+        "std_dlaeq_db": 0.11857273791835399,
+        "bootstrap_95ci_lo": 0.015069639551167571,
+        "bootstrap_95ci_hi": 0.11701250183470886,
+        "cohens_d": 0.5400609248615235,
+        "rank_biserial": 0.6666666666666666,
+        "n_positive_gt_0p05": 8,
+        "n_negative_lt_m0p05": 2,
+        "n_tie_within_0p05": 10,
+        "one_sided_h2_less_statistic": 175.0,
+        "one_sided_h2_less_p": 0.9968051910400391,
+        "two_sided_statistic": 35.0,
+        "two_sided_p": 0.0072956085205078125
+      },
+      "n16_real": {
+        "label": "real_16",
+        "n": 16,
+        "mean_dlaeq_db": 0.08271835164068753,
+        "median_dlaeq_db": 0.04191104518233146,
+        "std_dlaeq_db": 0.12367338093063623,
+        "bootstrap_95ci_lo": 0.026668812109279783,
+        "bootstrap_95ci_hi": 0.14406608973900614,
+        "cohens_d": 0.6688452358804774,
+        "rank_biserial": 0.8088235294117647,
+        "n_positive_gt_0p05": 8,
+        "n_negative_lt_m0p05": 1,
+        "n_tie_within_0p05": 7,
+        "one_sided_h2_less_statistic": 123.0,
+        "one_sided_h2_less_p": 0.998931884765625,
+        "two_sided_statistic": 13.0,
+        "two_sided_p": 0.002685546875
+      },
+      "bass_6": {
+        "label": "bass_6",
+        "n": 6,
+        "mean_dlaeq_db": 0.1329522519948796,
+        "median_dlaeq_db": 0.07522915398923402,
+        "std_dlaeq_db": 0.14687437214896493,
+        "bootstrap_95ci_lo": 0.033206525262535536,
+        "bootstrap_95ci_hi": 0.2498803717990062,
+        "cohens_d": 0.9052106916245057,
+        "rank_biserial": 1.0,
+        "n_positive_gt_0p05": 4,
+        "n_negative_lt_m0p05": 0,
+        "n_tie_within_0p05": 2,
+        "one_sided_h2_less_statistic": 21.0,
+        "one_sided_h2_less_p": 1.0,
+        "two_sided_statistic": 0.0,
+        "two_sided_p": 0.03125
+      },
+      "non_bass_real": {
+        "label": "non_bass_real",
+        "n": 10,
+        "mean_dlaeq_db": 0.05257801142817229,
+        "median_dlaeq_db": 0.007973085489254572,
+        "std_dlaeq_db": 0.10399845177342232,
+        "bootstrap_95ci_lo": -0.008759643803112026,
+        "bootstrap_95ci_hi": 0.11321160471473649,
+        "cohens_d": 0.5055653284408705,
+        "rank_biserial": 0.6727272727272727,
+        "n_positive_gt_0p05": 4,
+        "n_negative_lt_m0p05": 1,
+        "n_tie_within_0p05": 5,
+        "one_sided_h2_less_statistic": 46.0,
+        "one_sided_h2_less_p": 0.9755859375,
+        "two_sided_statistic": 9.0,
+        "two_sided_p": 0.064453125
+      },
+      "per_clip": {
+        "165523__zemidlo__snare-roll-hit-crash": 0.2139795292948392,
+        "179270__speedenza__poem-statue-of-jupiter-voice": 0.014284256372860682,
+        "189635__klankbeeld__choir-amen-130525_14": 0.12245768663846945,
+        "269906__theriavirra__02_crash_loud_cymbals__snares": -0.13050714012230458,
+        "380303__evanboyerman__various-male-command-voice-lines-mixed": 0.17738297811524717,
+        "431525__evanboyerman__british-soldiers-monologue-voice-actingmalevoice-over": 0.0009748145705970046,
+        "479941__liezen3__men-choir": 0.0010769239156473986,
+        "529808__logicogonist__bass-loop-and-drums-130-bpm": 0.06619078363513609,
+        "541260__bertsz__drum-and-bass-loop": 0.2696904841492369,
+        "627643__asiilanna__female-vocal": 0.1244857575475038,
+        "628213__josefpres__bass-loops-033-with-drums-long-loop-120-bpm": 0.00022226688993498556,
+        "629137__holizna__funky-lofi-drum-loop-88-bpm": 0.08426752434333196,
+        "629139__holizna__boombap-drums-90-bpm": 0.35971114622211076,
+        "657761__kevp888__221029_2225_fr_malechoir": -1.6606656785711493e-05,
+        "735157__jadis0x__simple-music-loop-bass-keys-drums": 0.01763130672952684,
+        "739037__acoustiangel__acoustiangel": 0.0016619146056484624,
+        "bass_heavy": -3.963063959133706e-05,
+        "mixed": 0.04693174148130197,
+        "speech_like": -0.08965201645361276,
+        "transient": -3.670568112568162e-06
+      },
+      "bootstrap": {
+        "n_boot": 10000,
+        "seed": 0,
+        "method": "percentile"
+      }
+    }
+  },
+  "per_clip": {
+    "165523__zemidlo__snare-roll-hit-crash": {
+      "dlaeq_s1": 0.045661746715097706,
+      "dlceq_s1": -0.279687871001741,
+      "dlaeq_s2": 0.1991379605971062,
+      "dlceq_s2": 0.2139795292948392
+    },
+    "179270__speedenza__poem-statue-of-jupiter-voice": {
+      "dlaeq_s1": 0.8402282799771257,
+      "dlceq_s1": -0.24250031707983055,
+      "dlaeq_s2": -0.1809328807387871,
+      "dlceq_s2": 0.014284256372860682
+    },
+    "189635__klankbeeld__choir-amen-130525_14": {
+      "dlaeq_s1": 0.0276677463121473,
+      "dlceq_s1": 0.031142672682122452,
+      "dlaeq_s2": -0.023641592719656046,
+      "dlceq_s2": 0.12245768663846945
+    },
+    "269906__theriavirra__02_crash_loud_cymbals__snares": {
+      "dlaeq_s1": -0.007609575822954184,
+      "dlceq_s1": -0.027558362065605024,
+      "dlaeq_s2": 0.02208698926432362,
+      "dlceq_s2": -0.13050714012230458
+    },
+    "380303__evanboyerman__various-male-command-voice-lines-mixed": {
+      "dlaeq_s1": -0.11540183943117199,
+      "dlceq_s1": -0.03584187378842785,
+      "dlaeq_s2": -1.1886657924552964,
+      "dlceq_s2": 0.17738297811524717
+    },
+    "431525__evanboyerman__british-soldiers-monologue-voice-actingmalevoice-over": {
+      "dlaeq_s1": 1.4397727001602902,
+      "dlceq_s1": -0.39539062785769374,
+      "dlaeq_s2": -0.07248153589314654,
+      "dlceq_s2": 0.0009748145705970046
+    },
+    "479941__liezen3__men-choir": {
+      "dlaeq_s1": 0.03596995887633625,
+      "dlceq_s1": -0.005562615053676723,
+      "dlaeq_s2": -0.009321774841296815,
+      "dlceq_s2": 0.0010769239156473986
+    },
+    "529808__logicogonist__bass-loop-and-drums-130-bpm": {
+      "dlaeq_s1": 2.301682101106522,
+      "dlceq_s1": -0.43974553777051995,
+      "dlaeq_s2": -0.6934661853883171,
+      "dlceq_s2": 0.06619078363513609
+    },
+    "541260__bertsz__drum-and-bass-loop": {
+      "dlaeq_s1": 1.6119438752230764,
+      "dlceq_s1": -1.4296592803981127,
+      "dlaeq_s2": -0.9568263591515063,
+      "dlceq_s2": 0.2696904841492369
+    },
+    "627643__asiilanna__female-vocal": {
+      "dlaeq_s1": -0.06867779995185685,
+      "dlceq_s1": 0.05959885698834455,
+      "dlaeq_s2": -0.16380755412559722,
+      "dlceq_s2": 0.1244857575475038
+    },
+    "628213__josefpres__bass-loops-033-with-drums-long-loop-120-bpm": {
+      "dlaeq_s1": 1.5919660874724428,
+      "dlceq_s1": -0.09624623254359221,
+      "dlaeq_s2": -0.004424197204784264,
+      "dlceq_s2": 0.00022226688993498556
+    },
+    "629137__holizna__funky-lofi-drum-loop-88-bpm": {
+      "dlaeq_s1": 1.6338838756493175,
+      "dlceq_s1": -0.2684595665232621,
+      "dlaeq_s2": -1.078533950766996,
+      "dlceq_s2": 0.08426752434333196
+    },
+    "629139__holizna__boombap-drums-90-bpm": {
+      "dlaeq_s1": 2.6740826447987587,
+      "dlceq_s1": -1.7176578069118307,
+      "dlaeq_s2": -0.5078928180430466,
+      "dlceq_s2": 0.35971114622211076
+    },
+    "657761__kevp888__221029_2225_fr_malechoir": {
+      "dlaeq_s1": 0.22126286642845372,
+      "dlceq_s1": -0.04827005115833316,
+      "dlaeq_s2": -1.6606656195961023e-05,
+      "dlceq_s2": -1.6606656785711493e-05
+    },
+    "735157__jadis0x__simple-music-loop-bass-keys-drums": {
+      "dlaeq_s1": 2.070791324441487,
+      "dlceq_s1": -1.032093408343485,
+      "dlaeq_s2": -0.1840311729552866,
+      "dlceq_s2": 0.01763130672952684
+    },
+    "739037__acoustiangel__acoustiangel": {
+      "dlaeq_s1": 0.3840434600482965,
+      "dlceq_s1": -0.4141161636456445,
+      "dlaeq_s2": -0.0253178066436206,
+      "dlceq_s2": 0.0016619146056484624
+    },
+    "bass_heavy": {
+      "dlaeq_s1": 4.906874567699177,
+      "dlceq_s1": -2.2310242101920608,
+      "dlaeq_s2": 2.7713989027233765e-05,
+      "dlceq_s2": -3.963063959133706e-05
+    },
+    "mixed": {
+      "dlaeq_s1": 3.874205474743789,
+      "dlceq_s1": -2.5339385745729857,
+      "dlaeq_s2": -0.35150593303951894,
+      "dlceq_s2": 0.04693174148130197
+    },
+    "speech_like": {
+      "dlaeq_s1": 0.007112293359256228,
+      "dlceq_s1": -0.01509467876491044,
+      "dlaeq_s2": -0.11447695107636946,
+      "dlceq_s2": -0.08965201645361276
+    },
+    "transient": {
+      "dlaeq_s1": 0.01363688662659257,
+      "dlceq_s1": -0.38216873549065866,
+      "dlaeq_s2": -9.074064593050934e-07,
+      "dlceq_s2": -3.670568112568162e-06
+    }
+  }
+}

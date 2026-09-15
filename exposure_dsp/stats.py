@@ -170,6 +170,142 @@ def run_s2_stats(csv_path: Path | None = None, out_path: Path | None = None) -> 
     return payload
 
 
+HYPOTHESIS_CWEIGHT = {
+    "registered_before_looking": True,
+    "s1": (
+        "At matched LUFS, S1 ΔLCeq should be lower (better) than S1 ΔLAeq, "
+        "because C counts the bass that the S1 shelf removes."
+    ),
+    "s2": (
+        "S2 should do the opposite: ΔLCeq should be higher (worse) than ΔLAeq, "
+        "because S2 cuts mids that A weights more than C."
+    ),
+}
+
+
+def run_cweight_stats(fs: float = 48000.0, duration_s: float = 8.0, out_path: Path | None = None) -> dict[str, Any]:
+    """ΔLCeq at the frozen matched-LUFS gains. Does not retune S1/S2 knobs.
+
+    Re-processes S1/S2 in float (PCM_16 wavs peak-normalize if |x|>1, which
+    breaks a few bass clips). Flat LUFS matches are rebuilt as G * original
+    from comparison.csv.
+    """
+    from dataclasses import replace
+
+    from .experiment import load_corpus
+    from .metrics import laeq_proxy, lceq_proxy
+    from .paths import TABLES, ensure_dirs
+    from .proposed import ProposedConfig, ProposedProcessor
+
+    ensure_dirs()
+    rows = load_comparison()
+    by = {(r["clip"], r["system"]): r for r in rows}
+    a_s1 = matched_lufs_dlaeq(rows, "proposed", "gain_matched_loudness")
+    a_s2 = matched_lufs_dlaeq(rows, "aligned", "aligned_gain_matched_loudness")
+    clips = sorted(a_s1.keys())
+
+    clips_audio = load_corpus(fs, duration_s)
+    cfg_s1 = ProposedConfig(fs=fs)
+    cfg_s2 = replace(ProposedConfig.aligned(), fs=fs)
+    c_s1: dict[str, float] = {}
+    c_s2: dict[str, float] = {}
+    a_check_s1: dict[str, float] = {}
+    a_check_s2: dict[str, float] = {}
+    missing: list[str] = []
+    for i, clip in enumerate(clips, start=1):
+        x = clips_audio.get(clip)
+        if x is None:
+            missing.append(clip)
+            continue
+        g1 = _f(by[(clip, "gain_matched_loudness")], "gain")
+        g2 = _f(by[(clip, "aligned_gain_matched_loudness")], "gain")
+        print(f"[cweight {i}/{len(clips)}] {clip}", flush=True)
+        p = ProposedProcessor(cfg_s1).process(x)
+        a = ProposedProcessor(cfg_s2).process(x)
+        flat1 = np.asarray(x, dtype=float) * g1
+        flat2 = np.asarray(x, dtype=float) * g2
+        c_s1[clip] = lceq_proxy(p, fs) - lceq_proxy(flat1, fs)
+        c_s2[clip] = lceq_proxy(a, fs) - lceq_proxy(flat2, fs)
+        a_check_s1[clip] = laeq_proxy(p, fs) - laeq_proxy(flat1, fs)
+        a_check_s2[clip] = laeq_proxy(a, fs) - laeq_proxy(flat2, fs)
+
+    if missing:
+        raise FileNotFoundError(f"Corpus missing clips needed for C-weighting: {missing}")
+
+    s1_c = stats_from_deltas(c_s1, system="proposed")
+    s2_c = stats_from_deltas(c_s2, system="aligned")
+    s1_c["metric"] = "dlceq_at_matched_lufs"
+    s2_c["metric"] = "dlceq_at_matched_lufs"
+    s1_c["sign"] = "positive means processor worse than flat gain on digital LCeq"
+    s2_c["sign"] = "positive means processor worse than flat gain on digital LCeq"
+
+    mean_a_s1 = float(np.mean(list(a_s1.values())))
+    mean_a_s2 = float(np.mean(list(a_s2.values())))
+    mean_c_s1 = float(s1_c["n20"]["mean_dlaeq_db"])
+    mean_c_s2 = float(s2_c["n20"]["mean_dlaeq_db"])
+    check_err_s1 = float(np.max(np.abs([a_check_s1[c] - a_s1[c] for c in clips])))
+    check_err_s2 = float(np.max(np.abs([a_check_s2[c] - a_s2[c] for c in clips])))
+
+    s1_better_on_c = mean_c_s1 < mean_a_s1
+    s2_worse_on_c = mean_c_s2 > mean_a_s2
+    payload: dict[str, Any] = {
+        "hypothesis": HYPOTHESIS_CWEIGHT,
+        "knobs_frozen": True,
+        "source": (
+            "Re-process S1/S2 in float; LUFS-matched flats from comparison.csv gain. "
+            "Not a knob retune. Saved wavs are not used (PCM_16 peak-normalize if |x|>1)."
+        ),
+        "reprocess_vs_csv_max_abs_dlaeq_s1": check_err_s1,
+        "reprocess_vs_csv_max_abs_dlaeq_s2": check_err_s2,
+        "s1": {
+            "mean_dlaeq_db": mean_a_s1,
+            "mean_dlceq_db": mean_c_s1,
+            "dlceq_minus_dlaeq_db": mean_c_s1 - mean_a_s1,
+            "hypothesis": "ΔLCeq < ΔLAeq (bass cut should count on C)",
+            "supported": bool(s1_better_on_c),
+            "stats": s1_c,
+        },
+        "s2": {
+            "mean_dlaeq_db": mean_a_s2,
+            "mean_dlceq_db": mean_c_s2,
+            "dlceq_minus_dlaeq_db": mean_c_s2 - mean_a_s2,
+            "hypothesis": "ΔLCeq > ΔLAeq (mid cut should count less on C than on A)",
+            "supported": bool(s2_worse_on_c),
+            "stats": s2_c,
+        },
+        "per_clip": {
+            clip: {
+                "dlaeq_s1": a_s1[clip],
+                "dlceq_s1": c_s1[clip],
+                "dlaeq_s2": a_s2[clip],
+                "dlceq_s2": c_s2[clip],
+            }
+            for clip in clips
+        },
+    }
+    out_path = out_path or (TABLES / "stats_cweight.json")
+    out_path.write_text(json.dumps(payload, indent=2), encoding="utf-8")
+    payload["path"] = str(out_path)
+
+    csv_path = TABLES / "comparison_cweight.csv"
+    csv_rows = [
+        {
+            "clip": clip,
+            "dlaeq_s1_matched_lufs": a_s1[clip],
+            "dlceq_s1_matched_lufs": c_s1[clip],
+            "dlaeq_s2_matched_lufs": a_s2[clip],
+            "dlceq_s2_matched_lufs": c_s2[clip],
+        }
+        for clip in clips
+    ]
+    with csv_path.open("w", newline="", encoding="utf-8") as fh:
+        writer = csv.DictWriter(fh, fieldnames=list(csv_rows[0].keys()))
+        writer.writeheader()
+        writer.writerows(csv_rows)
+    payload["csv_path"] = str(csv_path)
+    return payload
+
+
 def interpret_s2_mean(mean_db: float) -> dict[str, str]:
     """Step 7 decision gate. Do not retune mid_target_dba after seeing this."""
     if mean_db < -0.2:
