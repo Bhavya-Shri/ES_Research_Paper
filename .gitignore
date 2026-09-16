@@ -13,5 +13,11 @@ audio_in/**
 !audio_in/.gitkeep
 !audio_in/README.md
 paper/_pdfdeps/
+paper/_overleaf_stage/
+paper/*.log
+paper/*.blg
+paper/*.aux
+paper/*.out
+paper/*.bbl
 .DS_Store
 Thumbs.db

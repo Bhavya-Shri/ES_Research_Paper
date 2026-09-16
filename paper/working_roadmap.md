@@ -196,7 +196,7 @@ Wilcoxon/CI for S2 deltas; optional paired S1 vs S2.
 
 **Done when:** PDF builds; claims = data.
 
-**Status:** done on the source. Claim hits in `main.tex` are denials or proxy disclaimers; `matched_exposure_quality.png` renamed to `matched_exposure_lsd.png`; stale fpdf `Frequency_Adaptive_Audio_Limiting.pdf` removed. No local `pdflatex`/`tectonic`; the IEEE PDF is an Overleaf compile of `main.tex`. `render_pdf.py` is obsolete.
+**Status:** done. Claim hits in `main.tex` are denials or proxy disclaimers; `matched_exposure_quality.png` renamed to `matched_exposure_lsd.png`; stale fpdf `Frequency_Adaptive_Audio_Limiting.pdf` removed. Local IEEE PDF is `paper/main.pdf` (Tectonic, 9 pages). Overleaf `pdflatex` still preferred for Times fonts. `render_pdf.py` is obsolete.
 
 ---
 
@@ -216,7 +216,7 @@ Queries in the audit file §8 Phase 7. Add anything that is a real neighbour.
 
 **Last step:** submitted PDF + frozen code/results that regenerate every number.
 
-**Status:** venue locked 16 Sep 2026. **Primary: DAFx 2027** (Cremona, 24–27 Aug 2027). Do not rush ICASSP 2027 (4+1 pages, 23 Sep 2026 AoE). Author checklist is in `progress_audit.md` §2.9. Portal submit waits for the DAFx CFP. Compile `main.tex` on Overleaf. Add Bhavya's e-mail before the portal.
+**Status:** venue locked 16 Sep 2026. **Primary: DAFx 2027** (Cremona, 24–27 Aug 2027). Do not rush ICASSP 2027 (4+1 pages, 23 Sep 2026 AoE). Author checklist is in `progress_audit.md` §2.9. Portal submit waits for the DAFx CFP. Compile on Overleaf with **Upload Project** (`paper/overleaf_upload.zip`); GitHub import is premium. Add Bhavya's e-mail before the portal.
 
 ---
 
@@ -250,8 +250,8 @@ Those are a **second** paper or a journal extension.
 | 9 Stats S2 | **Done** (`stats_s2.json`; CI excludes 0) |
 | 10 C-weighting | **Done** (`stats_cweight.json`; S1 −0.58 dB, S2 +0.06 dB) |
 | 11 Rewrite tex | **Done** (version C in `main.tex`) |
-| 12 Compile pass | **Done** (tex claim check; Overleaf for IEEE PDF) |
+| 12 Compile pass | **Done** (`paper/main.pdf` 9 pages) |
 | 13 Xplore search | **Done** (US~11006215, AES TD1008; no clone of the matched test) |
 | 14 Venue lock | **Done** (DAFx 2027; portal submit waits on CFP) |
 
-Roadmap steps 0–14 venue lock are done. Portal submit is the remaining action: wait for the DAFx 2027 CFP, retarget their template, compile on Overleaf. Do not skip to extra clips, MUSHRA, HATS, or ML. Do not cut a 4-page ICASSP version this week.
+Roadmap steps 0–14 venue lock are done. Portal submit is the remaining action: wait for the DAFx 2027 CFP, retarget their template, compile on Overleaf via Upload Project (`paper/overleaf_upload.zip`). Do not skip to extra clips, MUSHRA, HATS, or ML. Do not cut a 4-page ICASSP version this week.

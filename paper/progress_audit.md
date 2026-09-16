@@ -26,7 +26,7 @@ S1 loses at matched LUFS (+1.17 dB); S2 reverses the sign (−0.27 dB, bootstrap
 
 S1 remains the failed heuristic on purpose. S2 knobs are frozen (`sub_atten_db=0`, `harmonic_mix=0`, `mid_target_dba=72`).
 
-**Paper vs data:** `main.tex` is version C. Claim vocabulary was searched; remaining hits are denials or calibrated-proxy disclaimers. Related work also cites US~11006215 and AES TD1008. First venue is **DAFx 2027** (Cremona, 24–27 Aug 2027). No `pdflatex` on this machine; the PDF is an Overleaf compile of `main.tex`. The old fpdf file `Frequency_Adaptive_Audio_Limiting.pdf` is removed so it cannot be submitted by mistake.
+**Paper vs data:** `main.tex` is version C. Claim vocabulary was searched; remaining hits are denials or calibrated-proxy disclaimers. Related work also cites US~11006215 and AES TD1008. First venue is **DAFx 2027** (Cremona, 24–27 Aug 2027). Compiled locally to `paper/main.pdf` (9 pages, IEEEtran + BibTeX, no undefined citations). No Overleaf login in this environment; Tectonic is XeTeX so Times (`ptm`) falls back to Latin Modern. Overleaf `pdflatex` will use Times. The old fpdf file `Frequency_Adaptive_Audio_Limiting.pdf` is removed so it cannot be submitted by mistake.
 
 **Git:** https://github.com/Bhavya-Shri/ES_Research_Paper.git — branch `main`. This file is updated after every stretch and pushed with that stretch.
 
@@ -48,7 +48,7 @@ S1 remains the failed heuristic on purpose. S2 knobs are frozen (`sub_atten_db=0
 | 9 Stats S2 | C | **Done** (required part ran with Step 7) | `results/tables/stats_s2.json`; CI excludes 0. Optional paired S1 vs S2 test **not** implemented |
 | **10 C-weighting** | **D** | **Done** | `exposure_dsp/cweighting.py`; `stats_cweight.json`; S1 ΔLCeq −0.58 dB, S2 +0.06 dB; both hypotheses held |
 | **11 Rewrite `main.tex`** | **E** | **Done** | version C; S0/S1/S2; S2 figure; C paragraph; modest margin |
-| **12 Compile / claim check** | **E** | **Done** (source check; no local `pdflatex`) | claim hits qualified; stale fpdf PDF removed; IEEE PDF is Overleaf |
+| **12 Compile / claim check** | **E** | **Done** | `paper/main.pdf` 9 pages; claim hits qualified; stale fpdf PDF removed |
 | **13 IEEE Xplore + AES close-out** | **F** | **Done** | no clone of the matched LUFS/\(L_{Aeq}\) test; added US~11006215 and AES TD1008 |
 | **14 Venue lock** | **F** | **Done** (portal submit waits) | **DAFx 2027** locked; do not rush ICASSP 2027 4+1 |
 
@@ -126,7 +126,7 @@ S1 16-real \(\Delta L_{Ceq}\) −0.40 dB; S2 16-real +0.08 dB. Lesson: allocatio
 - Limitations: digital proxy; mid cut may hurt speech; no MUSHRA; modest S2 margin.
 - Conclusion: design rule, not a new limiter.
 
-**Missing until Overleaf:** a compiled IEEEtran PDF. Compile `paper/main.tex` there. `render_pdf.py` is obsolete.
+**Compiled:** `paper/main.pdf` (9 pages, Tectonic). `render_pdf.py` is obsolete.
 
 ### 2.7 Step 12 claim search (`main.tex`)
 
@@ -193,7 +193,7 @@ S2 reversed the sign. There is no listening test. §6 of the publishing audit sa
 | Ethics / listeners | N/A (no listening test) |
 | IEEE-style bibliography | Yes (`IEEEtran`) |
 | Second author e-mail | **Missing** — add Bhavya's VIT address before the portal |
-| Compiled IEEE/DAFx PDF | **Overleaf** — no local `pdflatex` |
+| Compiled IEEE/DAFx PDF | `paper/main.pdf` (9 pages; Tectonic XeTeX; Times fallback to Latin Modern) |
 | Internal read (coauthor + outsider: “what is the contribution?”) | **User** — if they say “a new limiter,” rewrite |
 | ORCID (ICASSP 2027 requires it; DAFx may not) | Get one anyway |
 
@@ -233,7 +233,7 @@ Venue is locked. Do not retune mid target 72. After each stretch, update this fi
 
 ### Immediate — portal submit (waits on DAFx CFP)
 
-1. Compile `paper/main.tex` on Overleaf and keep that PDF with the git tag.  
+1. Compile on Overleaf **without** GitHub import (that is premium): upload `paper/overleaf_upload.zip` via **New Project → Upload Project**. Set compiler to pdfLaTeX if the Menu is not already. Local `paper/main.pdf` already exists (9 pages; Tectonic fonts are not Times).  
 2. Add Bhavya's e-mail to the author block.  
 3. Internal read: one coauthor, one outsider. If they say “a new limiter,” rewrite.  
 4. When the DAFx 2027 CFP posts, copy into their template (likely ~8 pages, maybe double-blind) and submit.  
@@ -261,7 +261,7 @@ Venue is locked. Do not retune mid target 72. After each stretch, update this fi
 | Chen vs “Liang 2023” | The IJERPH paper is Chen, Xue, Wang, Cai, Zhu (2023). Cite `Chen2023`. |
 | Quality / SPL language | Still forbidden. Digital \(L_{Aeq}\) proxy only. |
 | p-hacking S2 | Mid target 72 was frozen before the 20-clip mean. Leave it. |
-| Stale PDF on GitHub | Old fpdf `Frequency_Adaptive_Audio_Limiting.pdf` removed. IEEE PDF = Overleaf `main.tex`. |
+| Stale PDF on GitHub | Old fpdf removed. Current IEEE PDF is `paper/main.pdf` (Tectonic). Overleaf `pdflatex` still preferred for Times fonts. |
 | C-weighting oversell | S1 on C is a real sign flip (−0.58 dB); S2 on C is only +0.06 dB. Write meter-dependence, not “C is the right safety meter.” |
 | Saved wavs vs tables | `save_wav` peak-normalizes if \|x\|>1. C-weighting used float re-process + CSV gains, not those wavs. |
 
@@ -283,4 +283,4 @@ S1 freeze (do not overwrite as the source of truth): `results/frozen/draft-negat
 
 ## 7. Next action
 
-**Portal submit.** When the DAFx 2027 CFP posts: retarget their template, compile on Overleaf, add Bhavya's e-mail, then submit. Do not retune knobs. Do not cut a 4-page ICASSP version this week.
+Portal submit waits for the DAFx CFP. Compile on Overleaf with **Upload Project** (`paper/overleaf_upload.zip`); GitHub import is premium. Add Bhavya's e-mail before the portal. Do not retune knobs. Do not cut a 4-page ICASSP version this week.

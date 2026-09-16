@@ -9,6 +9,9 @@
 \usetikzlibrary{arrows.meta,positioning}
 \usepackage{url}
 
+% Overleaf Menu is pdfLaTeX; this keeps latexmk on the same engine.
+% !TeX program = pdflatex
+
 \graphicspath{{figures/}}
 
 \begin{document}
@@ -72,12 +75,12 @@ When a harmonic complex loses its fundamental, listeners can still hear a pitch 
 
 Table~\ref{tab:gap} summarises the pieces. Frequency-selective tools for dose, hearing protection, and loudness already exist. What is scarce is a matched LUFS versus digital $L_{Aeq}$ test of a bass-first heuristic \emph{and} a $w_A$-aligned configuration against flat gain on music. That comparison is what this study provides. It does not introduce a new limiter architecture.
 
-\begin{table}[!t]
+\begin{table*}[!t]
 \caption{Related methods versus this study. ``Matched test'' here means equal LUFS or equal digital $L_{Aeq}$ on music, for a frequency heuristic versus flat gain.}
 \label{tab:gap}
 \centering
 \renewcommand{\arraystretch}{1.12}
-\begin{tabular}{>{\raggedright\arraybackslash}p{0.20\columnwidth} c c c c c}
+\begin{tabular}{>{\raggedright\arraybackslash}p{0.28\textwidth} c c c c c}
 \hline
 Approach & Exposure & Freq.\ sel. & Loudness aim & Bass fill & Matched test \\
 \hline
@@ -91,7 +94,7 @@ Virtual bass \cite{Gan2001} & No & Yes & Bass only & Yes & No \\
 This work (S0/S1/S2) & Proxy & Yes & LUFS & S1 only & Yes \\
 \hline
 \end{tabular}
-\end{table}
+\end{table*}
 
 \section{Proposed Method}
 \label{sec:method}

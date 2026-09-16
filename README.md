@@ -6,7 +6,7 @@ Offline Python DSP for the paper:
 
 This repo implements the experiment. It does not claim calibrated ear-level SPL or hearing-safety outcomes.
 
-IEEE draft (written from the 20-clip comparison): `paper/main.tex`. Figures live in `paper/figures/`. Compile with IEEEtran (Overleaf is enough): `pdflatex main && bibtex main && pdflatex main && pdflatex main`. Regenerating paper plots from existing tables, without re-running DSP: `python paper/make_figures.py`.
+IEEE draft (written from the 20-clip comparison): `paper/main.tex`. Figures live in `paper/figures/`. Free Overleaf: **New Project → Upload Project** and choose `paper/overleaf_upload.zip` (GitHub import is premium). Compiler: pdfLaTeX. Local compile: `pdflatex main && bibtex main && pdflatex main && pdflatex main`. Regenerating paper plots from existing tables, without re-running DSP: `python paper/make_figures.py`.
 
 ## What is implemented
 
