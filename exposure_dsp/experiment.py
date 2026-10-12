@@ -84,6 +84,24 @@ def _list_user_wavs() -> list[Path]:
     return sorted(p for p in AUDIO_IN.iterdir() if p.suffix.lower() in {".wav", ".flac"})
 
 
+def _trim(x: np.ndarray, fs: float, max_s: float | None) -> np.ndarray:
+    if max_s is None:
+        return x
+    n = int(round(fs * max_s))
+    return x if len(x) <= n else x[:n]
+
+
+def load_wav_dir(folder: Path, fs: float = 48000.0, max_s: float = 8.0) -> dict[str, np.ndarray]:
+    """Load only wav/flac in *folder*. Does not add synthetics."""
+    clips: dict[str, np.ndarray] = {}
+    if not folder.exists():
+        return clips
+    for path in sorted(p for p in folder.iterdir() if p.suffix.lower() in {".wav", ".flac", ".ogg"}):
+        x, _ = load_mono(path, target_fs=fs)
+        clips[path.stem] = _trim(x, fs, max_s)
+    return clips
+
+
 def load_corpus(fs: float = 48000.0, duration_s: float = 8.0) -> dict[str, np.ndarray]:
     clips = synthetic_corpus(fs, duration_s)
     for path in _list_user_wavs():
@@ -146,11 +164,16 @@ def _append_matched_gains(
     return gain_exp, gain_loud
 
 
-def run_comparison(fs: float = 48000.0, duration_s: float = 8.0, save_audio: bool = True) -> list[dict[str, Any]]:
+def run_comparison(
+    fs: float = 48000.0,
+    duration_s: float = 8.0,
+    save_audio: bool = True,
+    clips: dict[str, np.ndarray] | None = None,
+) -> list[dict[str, Any]]:
     ensure_dirs()
     cfg_s1 = ProposedConfig(fs=fs)
     cfg_s2 = replace(ProposedConfig.aligned(), fs=fs)
-    clips = load_corpus(fs, duration_s)
+    clips = load_corpus(fs, duration_s) if clips is None else clips
     rows: list[dict[str, Any]] = []
     n_todo = sum(1 for n in clips if n != "six_tone_debug")
     done = 0
@@ -433,4 +456,27 @@ def run_experiment(
     summary = summarize(comparison)
     payload = {"summary": summary, "comparison": comparison, "ablation": ablation}
     (TABLES / "experiment.json").write_text(json.dumps(payload, indent=2, default=str), encoding="utf-8")
+    return payload
+
+
+def run_extension(
+    folder: Path | None = None,
+    fs: float = 48000.0,
+    max_s: float = 8.0,
+) -> dict[str, Any]:
+    """S1+S2 on audio_in/extension only. Does not overwrite comparison.csv."""
+    from .paths import AUDIO_IN
+
+    folder = folder or (AUDIO_IN / "extension")
+    clips = load_wav_dir(folder, fs=fs, max_s=max_s)
+    if not clips:
+        raise FileNotFoundError(f"No wav/flac/ogg files in {folder}")
+    rows = run_comparison(fs=fs, save_audio=False, clips=clips)
+    _write_csv(TABLES / "comparison_extension.csv", rows)
+    write_s1_s2_csv(rows, TABLES / "comparison_extension_s1_s2.csv")
+    summary = summarize(rows)
+    payload = {"summary": summary, "n_clips": len(clips), "clips": sorted(clips), "folder": str(folder)}
+    (TABLES / "experiment_extension.json").write_text(
+        json.dumps(payload, indent=2, default=str), encoding="utf-8"
+    )
     return payload

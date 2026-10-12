@@ -50,14 +50,14 @@ We compare three systems on the same audio: frequency-flat gain (S0), a bass-fir
 
 Three findings follow. First, at matched LUFS, S1 has a \emph{higher} digital $L_{Aeq}$ proxy than S0, by 1.17\,dB on average over 20 clips. Bass-heavy programme accounts for almost all of the difference. Second, S2---no low shelf, no harmonics, stronger mid-band cut---reverses that sign ($-0.27$\,dB). The interval excludes zero; the margin is modest and is not a large dose saving. Third, scoring the same pairs with C-weighting flips both conclusions, so the result is meter-dependence, not a universal limiter. Section~\ref{sec:results} shows the mechanism: A-weighting already ignores energy near 40\,Hz, while BS.1770 K-weighting does not.
 
-The rest of the paper is organised as follows. Section~\ref{sec:related} reviews related methods and states the gap. Section~\ref{sec:method} describes S1 and S2 as design heuristics, not as a numerical solver. Section~\ref{sec:impl} records implementation and verification. Section~\ref{sec:setup} defines the experiment. Section~\ref{sec:results} reports the 20-clip comparison. Section~\ref{sec:limits} collects limitations in one place. Section~\ref{sec:conclusion} concludes.
+The rest of the paper is organised as follows. Section~\ref{sec:related} reviews related methods and states the gap. Section~\ref{sec:method} describes S1 and S2 as design heuristics, not as a numerical solver. Section~\ref{sec:impl} records implementation and verification. Section~\ref{sec:setup} defines the experiment. Section~\ref{sec:results} reports the 20-clip comparison. Section~\ref{sec:discuss} discusses the allocation rule and the modest S2 margin. Section~\ref{sec:limits} collects limitations in one place. Section~\ref{sec:conclusion} concludes.
 
 \section{Related Work}
 \label{sec:related}
 
 \subsection{Exposure control}
 
-H.870 defines an A-weighted sound-allowance model and discusses the difficulty of mapping a digital signal to ear-level pressure, which depends on transducer sensitivity and volume setting \cite{H870}. Device-side responses are typically volume caps, dose meters, or broadband automatic gain reduction \cite{Levey2011,Sulaiman2013,Chen2023}. Chen \emph{et al.} combine H.870 dose tracking, speaker frequency-response correction, and broadband DRC to lower estimated playback level as allowance is used \cite{Chen2023}. US~6\,826\,515 is a headset dosimeter whose corrective gain is frequency-flat, so the chosen equalisation is preserved \cite{US6826515}; that is S0 in patent form. US~9\,980\,028 is a TWA limiter that may use multiband companding to keep speech loudness while cutting RMS energy \cite{US9980028}. AES technical document TD1008 recommends LUFS for streaming distribution and notes that portable players remain an H.870 / EN~50332-3 dose problem \cite{AESTD1008}; it does not specify a frequency-allocation algorithm. Those systems manage level, or allocate it for speech-headset intelligibility. They do not report a matched LUFS versus digital $L_{Aeq}$ comparison on music.
+H.870 defines an A-weighted sound-allowance model and discusses the difficulty of mapping a digital signal to ear-level pressure, which depends on transducer sensitivity and volume setting \cite{H870}. Device-side responses are typically volume caps, dose meters, or broadband automatic gain reduction \cite{Levey2011,Sulaiman2013,Chen2023}. Chen \emph{et al.} combine H.870 dose tracking, speaker frequency-response correction, and broadband DRC to lower estimated playback level as allowance is used \cite{Chen2023}. US~6\,826\,515 is a headset dosimeter whose corrective gain is frequency-flat, so the chosen equalisation is preserved \cite{US6826515}; that is S0 in patent form. US~9\,980\,028 is a TWA limiter that may use multiband companding to keep speech loudness while cutting RMS energy \cite{US9980028}. AES technical document TD1008 recommends LUFS for streaming distribution and notes that portable players remain an H.870 / EN~50332-3 dose problem \cite{AESTD1008}; it does not specify a frequency-allocation algorithm. EN~50332 itself is a portable-player maximum-level test, not a weekly A-weighted allowance and not a frequency-allocation rule. Those systems manage level, or allocate it for speech-headset intelligibility. They do not report a matched LUFS versus digital $L_{Aeq}$ comparison on music.
 
 \subsection{Dynamic range control}
 
@@ -220,6 +220,17 @@ The reference system is offline Python (\texttt{numpy}/\texttt{scipy}) at $f_s=4
 
 S1 and S2 share that code path. S2 is \texttt{ProposedConfig.aligned()}: shelf $0$\,dB, harmonic mix $0$, mid target $72$. Parameters are listed in Table~\ref{tab:params}. Source code is the \texttt{exposure\_dsp} package in the project repository. Listings are omitted from the paper.
 
+The per-clip comparison, in outline, is:
+
+\begin{enumerate}
+\item Load $x$ at 48\,kHz mono.
+\item $y_{\mathrm{S1}}\leftarrow$ three-band processor at the S1 column of Table~\ref{tab:params}.
+\item $y_{\mathrm{S2}}\leftarrow$ the same processor at the S2 column.
+\item Choose $G_{\mathrm{S1,L}}$ so $\mathrm{LUFS}(G_{\mathrm{S1,L}}x)=\mathrm{LUFS}(y_{\mathrm{S1}})$; likewise $G_{\mathrm{S2,L}}$ for S2.
+\item $\Delta L_{Aeq}=\mathrm{proxy}(y)-\mathrm{proxy}(Gx)$ at that match. The dual uses an $L_{Aeq}$-matched $G$ and reports $\Delta$LUFS.
+\item Repeat for every clip. Do not retune Table~\ref{tab:params} after inspecting the mean.
+\end{enumerate}
+
 \begin{table}[!t]
 \caption{Processor parameters. S2 is a configuration of S1, not a second architecture.}
 \label{tab:params}
@@ -266,7 +277,11 @@ Two matching rules are applied to each of S1 and S2, each to within a few hundre
 \item \textbf{Matched loudness:} $G$ is chosen so the S0 output has the same integrated LUFS \cite{BS1770} as the processor (\texttt{pyloudnorm}).
 \end{itemize}
 
-Because flat gain is frequency-independent, both meters move by approximately $20\log_{10} G$. The two matching rules are therefore two views of one difference, not two independent experiments. The interesting content is the sign of that difference and which material produces it.
+A-weighting is linear, so the first guess is
+\begin{equation}
+G = 10^{(L_{\mathrm{tgt}}-L(x))/20}.
+\end{equation}
+LUFS is close to that after K-weighting and gating; one correction pass is applied if the residual exceeds 0.05\,dB. Because flat gain is frequency-independent, both meters move by approximately $20\log_{10} G$. The two matching rules are therefore two views of one difference, not two independent experiments. The interesting content is the sign of that difference and which material produces it.
 
 \subsection{Metrics}
 
@@ -278,7 +293,9 @@ A C-weighted proxy $L_{Ceq}^{\mathrm{proxy}}$ uses the IEC~61672 C analog protot
 
 \subsection{Material}
 
-The corpus has $n=20$ clips at 48\,kHz mono: 16 Creative Commons Freesound recordings (bass loops, drum loops, choir, solo vocal, speech, cymbals)\footnote{Freesound IDs 165523, 179270, 189635, 269906, 380303, 431525, 479941, 529808, 541260, 627643, 628213, 629137, 629139, 657761, 735157, 739037.} and four built-in synthetic programmes (bass-heavy, speech-like, transient, mixed). Synthetics are included for completeness and labelled as such. The conclusions below are also stated for the 16 real recordings alone.
+The primary corpus has $n=20$ clips at 48\,kHz mono: 16 Creative Commons Freesound recordings (bass loops, drum loops, choir, solo vocal, speech, cymbals)\footnote{Freesound IDs 165523, 179270, 189635, 269906, 380303, 431525, 479941, 529808, 541260, 627643, 628213, 629137, 629139, 657761, 735157, 739037.} and four built-in synthetic programmes (bass-heavy, speech-like, transient, mixed). Synthetics are included for completeness and labelled as such. The conclusions below are also stated for the 16 real recordings alone. Table~\ref{tab:inventory} lists every primary clip. Table~\ref{tab:genre} groups them by material type. An extension set of additional real recordings is reported separately in Section~\ref{sec:extension}; it does not replace the frozen 20-clip means.
+
+\input{inventory_table}
 
 \subsection{Hypotheses}
 
@@ -313,7 +330,10 @@ The mean over 20 clips is $+1.17$\,dB (median $+0.61$\,dB). On the 16 Freesound 
 
 The failure is concentrated in bass. The six real bass and drum-loop clips sit between $+1.59$ and $+2.67$\,dB (mean $+1.98$\,dB). Speech, choir, solo vocal, and cymbal clips as a group average $+0.28$\,dB. Synthetic bass and mixed programmes are more extreme ($+4.91$ and $+3.87$\,dB) because they were built with strong 40--50\,Hz components; they inflate the overall mean but they do not create the finding. Real bass loops already go the same way.
 
-A Wilcoxon signed-rank test on the 20 S1 $\Delta L_{Aeq}$ values rejects a zero median two-sided ($p=3.9\times 10^{-4}$; rank-biserial $r=0.84$). The one-sided test of H2-S1 ($\Delta<0$) is not supported ($p\approx 1$). The bootstrap 95\% CI on the mean is $[0.60,\,1.83]$\,dB. On the 16 real recordings the mean is $+0.92$\,dB (CI $[0.47,\,1.39]$; two-sided $p=0.002$). The six real bass loops sit at $+1.98$\,dB (CI $[1.69,\,2.33]$).
+A Wilcoxon signed-rank test on the 20 S1 $\Delta L_{Aeq}$ values rejects a zero median two-sided ($p=3.9\times 10^{-4}$; rank-biserial $r=0.84$). The one-sided test of H2-S1 ($\Delta<0$) is not supported ($p\approx 1$). The bootstrap 95\% CI on the mean is $[0.60,\,1.83]$\,dB. On the 16 real recordings the mean is $+0.92$\,dB (CI $[0.47,\,1.39]$; two-sided $p=0.002$). The six real bass loops sit at $+1.98$\,dB (CI $[1.69,\,2.33]$). Table~\ref{tab:subset} collects those tests next to the S2 numbers; Table~\ref{tab:genre} is the same $\Delta$ split by material type.
+
+\input{subset_table}
+\input{genre_table}
 
 \subsection{Why S1 moves the wrong way}
 
@@ -349,7 +369,10 @@ Per-clip $\Delta L_{Aeq}$ and the dual $\Delta$LUFS are in Table~\ref{tab:percli
 
 \subsection{C-weighting dependence}
 
-The same matched-LUFS pairs were re-scored with $L_{Ceq}$ (same RMS-plus-offset helper; not ear-level sound pressure). The hypothesis, written before looking, was HC above. C at 40\,Hz is about $-2$\,dB; A is about $-35$\,dB (Fig.~\ref{fig:cw}). On $n=20$, S1 mean $\Delta L_{Aeq}=+1.17$\,dB but mean $\Delta L_{Ceq}=-0.58$\,dB (bootstrap 95\% CI $[-0.94,\,-0.26]$; two-sided Wilcoxon $p=1.0\times 10^{-4}$). S2 mean $\Delta L_{Aeq}=-0.27$\,dB but mean $\Delta L_{Ceq}=+0.06$\,dB (CI $[0.02,\,0.12]$; $p=0.007$). Both sign predictions hold. Frequency-selective limiting is not uniformly better or worse than flat gain; it is better for the meter whose weight is large where the processor cuts. H.870 chose A. These remain digital-domain proxies. \textbf{HC is supported.}
+The same matched-LUFS pairs were re-scored with $L_{Ceq}$ (same RMS-plus-offset helper; not ear-level sound pressure). The hypothesis, written before looking, was HC above. C at 40\,Hz is about $-2$\,dB; A is about $-35$\,dB (Fig.~\ref{fig:cw}). On $n=20$, S1 mean $\Delta L_{Aeq}=+1.17$\,dB but mean $\Delta L_{Ceq}=-0.58$\,dB (bootstrap 95\% CI $[-0.94,\,-0.26]$; two-sided Wilcoxon $p=1.0\times 10^{-4}$). S2 mean $\Delta L_{Aeq}=-0.27$\,dB but mean $\Delta L_{Ceq}=+0.06$\,dB (CI $[0.02,\,0.12]$; $p=0.007$). Both sign predictions hold. Table~\ref{tab:cweight} repeats the comparison on the 16-real, bass, and non-bass subsets: the S1 sign flip is largest on bass, as expected if C is counting the shelf that A ignores. Frequency-selective limiting is not uniformly better or worse than flat gain; it is better for the meter whose weight is large where the processor cuts. H.870 chose A. These remain digital-domain proxies. \textbf{HC is supported.}
+
+\input{cweight_table}
+\input{cweight_perclip_table}
 
 \begin{figure}[!t]
 \centering
@@ -386,6 +409,28 @@ Fig.~\ref{fig:abl} shows mean change versus the original when S1 bands are enabl
 
 A target/ratio sweep on a six-tone-plus-noise debug signal (Table~\ref{tab:sweep}) shows the expected trade-off: a lower mid target reduces the proxy and raises LSD. That sweep characterises the compressor. It is not the 20-clip result and it is not a listening-test score. The S2 target of 72 on the corpus was frozen independently of this table.
 
+\subsection{Held-out extension clips}
+\label{sec:extension}
+
+The frozen 20-clip set is the confirmatory comparison. To address the small $n$, fifteen additional Freesound recordings (different IDs from the frozen 16) were processed with the \emph{same} S1 and S2 knobs (Table~\ref{tab:params}) and written to a separate table so they cannot overwrite the frozen means.\footnote{Extension Freesound IDs 183109, 242345, 256489, 264601, 316678, 325654, 332311, 345848, 391539, 401124, 413480, 416529, 439890, 476178, 508571.} Each file was truncated to 8\,s after resampling to 48\,kHz mono. Some previews are shorter than 8\,s; they were used as-is. The original 16 Freesound IDs remain the reported real subset.
+
+Table~\ref{tab:extension} gives per-clip $\Delta L_{Aeq}$ at matched LUFS. The extension S1 mean is $+1.00$\,dB and the S2 mean is $-0.16$\,dB---the same signs as the frozen 20-clip means ($+1.17$ and $-0.27$\,dB). That is a replication, not a new claim. Knobs were not retuned on the extension mean. Several short drum/FX previews sit near zero, as the frozen cymbal clips did; the S1 loss still appears on longer loops.
+
+\input{extension_table}
+
+\section{Discussion}
+\label{sec:discuss}
+
+The useful sentence is not ``multiband limiting is better than flat gain.'' It is a condition. At matched LUFS, a bass-first cut (S1) raises the digital $L_{Aeq}$ proxy relative to S0, because A-weighting already ignores the energy that was removed. A mid-band-first cut (S2) lowers that proxy, because $w_A$ is large where the cut is spent. Cohen's $d$ on the 20 S1 deltas is $+0.82$; on S2 it is $-0.66$. Both intervals exclude zero. The S2 mean is still only $-0.27$\,dB. That is a real sign flip on this corpus, not a large operational saving and not a hearing-protection result.
+
+Material type explains most of the S1 loss. Table~\ref{tab:genre} puts the six real bass loops at $+1.98$\,dB for S1 and $-0.57$\,dB for S2. Speech, choir, and cymbals sit near zero for S1; S2's larger wins on a few speech clips are mid-compressor events, not a bass-allocation story. Synthetic bass inflates the 20-clip S1 mean; the 16-real mean ($+0.92$\,dB) is enough on its own.
+
+C-weighting is the same comparison under a different meter, not a better safety argument. S1 looks better on $L_{Ceq}$ ($-0.58$\,dB) because C counts the bass that the shelf removed. S2 looks slightly worse on $L_{Ceq}$ ($+0.06$\,dB) because C down-weights the mids that S2 cut. H.870 chose A. A device that ``wins'' on C while losing on A has not met that standard.
+
+S2 is a configuration of S1. The architecture, crossover, and high-band path are unchanged. What changed is where attenuation is spent. That is why the paper does not claim a new limiter. The design rule is: if the constraint is an A-weighted digital proxy and the comparison is BS.1770 loudness, spend the cut where $w_A(f)$ is large. Equal-loudness contours motivated the opposite heuristic; they do not define the operational meters.
+
+The dual match is not a second experiment. Because S0 is frequency-flat, $\Delta$LUFS at matched $L_{Aeq}$ is the opposite sign of $\Delta L_{Aeq}$ at matched LUFS, to within a few hundredths of a dB. Reporting both is a check, not extra evidence.
+
 \begin{table}[!t]
 \caption{Mid-band target/ratio sweep on a synthetic six-tone-plus-noise signal. $\Delta L_{Aeq}$ is versus the unprocessed debug clip. LSD is not a listening-test score.}
 \label{tab:sweep}
@@ -410,7 +455,7 @@ Target & Ratio & $L_{Aeq}$ proxy & $\Delta L_{Aeq}$ (dB) & LSD (dB) \\
 
 This study compares digital processing rules. It does not show prevention of hearing loss, and it does not report ear-level SPL. The $L_{Aeq}$ and $L_{Ceq}$ figures use an uncalibrated offset; a real mapping would require a specific earphone, volume setting, and an IEC~60318-4 occluded-ear simulator \cite{IEC60318}, which still is not an individual human ear.
 
-LUFS is a standard loudness meter, not a booth loudness match. Band edges, shelf depth, and compressor constants were not searched over listeners. No Zwicker or Moore--Glasberg model is in the loop. No PEAQ or MUSHRA scores were collected. S2's mid cut may be objectionable on speech; that is untested. The S1 ablation was not repeated for S2. The S2 margin ($-0.27$\,dB) is a sign flip with a confidence interval that excludes zero, not a large operational saving. Four synthetic clips are in the mean; removing them does not reverse S1 or S2 on $L_{Aeq}$.
+LUFS is a standard loudness meter, not a booth loudness match. Band edges, shelf depth, and compressor constants were not searched over listeners. No Zwicker or Moore--Glasberg model is in the loop. No PEAQ or MUSHRA scores were collected. S2's mid cut may be objectionable on speech; that is untested. The S1 ablation was not repeated for S2. The S2 margin ($-0.27$\,dB) is a sign flip with a confidence interval that excludes zero, not a large operational saving. Four synthetic clips are in the mean; removing them does not reverse S1 or S2 on $L_{Aeq}$. The extension set is a second real-material check with frozen knobs; it is not a search for a better mid target.
 
 \section{Conclusion}
 \label{sec:conclusion}

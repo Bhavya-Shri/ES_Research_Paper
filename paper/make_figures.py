@@ -311,6 +311,169 @@ def write_table(by: dict) -> dict:
     }
 
 
+def _fmt_pm(x: float) -> str:
+    return f"{x:+.2f}"
+
+
+def write_inventory_table() -> None:
+    lines = [
+        r"\begin{table}[!t]",
+        r"\centering",
+        r"\caption{Primary corpus. Real clips are Creative Commons Freesound recordings. Synthetics are built in \texttt{exposure\_dsp.signals}.}",
+        r"\label{tab:inventory}",
+        r"\renewcommand{\arraystretch}{1.08}",
+        r"\begin{tabular}{l l l}",
+        r"\hline",
+        r"Label & Type & Source \\",
+        r"\hline",
+    ]
+    for key, lab, typ in CLIPS:
+        src = "Synthetic" if typ == "Synth" else key.split("__")[0]
+        lines.append(f"{lab} & {typ} & {src} \\\\")
+    lines += [r"\hline", r"\end{tabular}", r"\end{table}"]
+    (OUT.parent / "inventory_table.tex").write_text("\n".join(lines) + "\n", encoding="utf-8")
+
+
+def write_genre_table(by: dict) -> None:
+    """Mean ΔLAeq / ΔLUFS by material type on the frozen 20-clip set."""
+    buckets: dict[str, list[tuple[float, float, float, float]]] = {
+        "Bass": [],
+        "Speech": [],
+        "Vocal": [],
+        "Drums": [],
+        "Synth": [],
+    }
+    for clip in ORDER:
+        p = by[(clip, "proposed")]
+        g1l = by[(clip, "gain_matched_loudness")]
+        g1e = by[(clip, "gain_matched_exposure")]
+        a = by[(clip, "aligned")]
+        g2l = by[(clip, "aligned_gain_matched_loudness")]
+        g2e = by[(clip, "aligned_gain_matched_exposure")]
+        dA1 = _f(p, "laeq_proxy") - _f(g1l, "laeq_proxy")
+        dA2 = _f(a, "laeq_proxy") - _f(g2l, "laeq_proxy")
+        dL1 = _f(p, "lufs") - _f(g1e, "lufs")
+        dL2 = _f(a, "lufs") - _f(g2e, "lufs")
+        buckets[GROUP[clip]].append((dA1, dA2, dL1, dL2))
+
+    lines = [
+        r"\begin{table}[!t]",
+        r"\centering",
+        r"\caption{Mean matched deltas by material type on the frozen 20-clip set. $\Delta L_{Aeq}$ is at matched LUFS; $\Delta$LUFS is at matched digital $L_{Aeq}$. Positive $\Delta L_{Aeq}$ means the processor has the higher exposure proxy.}",
+        r"\label{tab:genre}",
+        r"\renewcommand{\arraystretch}{1.12}",
+        r"\begin{tabular}{l c r r r r}",
+        r"\hline",
+        r"Type & $n$ & $\Delta L_{Aeq}$ S1 & $\Delta L_{Aeq}$ S2 & $\Delta$LUFS S1 & $\Delta$LUFS S2 \\",
+        r"\hline",
+    ]
+    order = ["Bass", "Speech", "Vocal", "Drums", "Synth"]
+    for typ in order:
+        rows = buckets[typ]
+        n = len(rows)
+        means = np.mean(np.asarray(rows), axis=0)
+        lines.append(
+            f"{typ} & {n} & {_fmt_pm(means[0])} & {_fmt_pm(means[1])} "
+            f"& {_fmt_pm(means[2])} & {_fmt_pm(means[3])} \\\\"
+        )
+    all_rows = [v for typ in order for v in buckets[typ]]
+    mall = np.mean(np.asarray(all_rows), axis=0)
+    lines.append(r"\hline")
+    lines.append(
+        f"All & {len(all_rows)} & {_fmt_pm(mall[0])} & {_fmt_pm(mall[1])} "
+        f"& {_fmt_pm(mall[2])} & {_fmt_pm(mall[3])} \\\\"
+    )
+    lines += [r"\hline", r"\end{tabular}", r"\end{table}"]
+    (OUT.parent / "genre_table.tex").write_text("\n".join(lines) + "\n", encoding="utf-8")
+
+
+def write_subset_table() -> None:
+    import json
+
+    s1 = json.loads((TABLES / "stats_s1.json").read_text(encoding="utf-8"))
+    s2 = json.loads((TABLES / "stats_s2.json").read_text(encoding="utf-8"))
+    keys = [
+        ("n20", r"All ($n{=}20$)"),
+        ("n16_real", r"Real ($n{=}16$)"),
+        ("bass_6", r"Real bass ($n{=}6$)"),
+        ("non_bass_real", r"Real non-bass ($n{=}10$)"),
+    ]
+    lines = [
+        r"\begin{table}[!t]",
+        r"\centering",
+        r"\caption{Wilcoxon signed-rank and bootstrap 95\% CI on $\Delta L_{Aeq}$ at matched LUFS. Cohen's $d$ and rank-biserial $r$ use the same paired deltas. Positive mean: processor worse than flat gain.}",
+        r"\label{tab:subset}",
+        r"\renewcommand{\arraystretch}{1.12}",
+        r"\begin{tabular}{l l r r r r r}",
+        r"\hline",
+        r"Set & Sys. & Mean & 95\% CI & $p$ (2s) & $d$ & $r$ \\",
+        r"\hline",
+    ]
+    for key, lab in keys:
+        for sys, blob in (("S1", s1), ("S2", s2)):
+            b = blob[key]
+            lines.append(
+                f"{lab} & {sys} & {b['mean_dlaeq_db']:+.2f} & "
+                f"[{b['bootstrap_95ci_lo']:.2f},\\,{b['bootstrap_95ci_hi']:.2f}] & "
+                f"{b['two_sided_p']:.1e} & {b['cohens_d']:+.2f} & {b['rank_biserial']:+.2f} \\\\"
+            )
+    lines += [r"\hline", r"\end{tabular}", r"\end{table}"]
+    (OUT.parent / "subset_table.tex").write_text("\n".join(lines) + "\n", encoding="utf-8")
+
+
+def write_cweight_table() -> None:
+    import json
+
+    s1 = json.loads((TABLES / "stats_s1.json").read_text(encoding="utf-8"))
+    s2 = json.loads((TABLES / "stats_s2.json").read_text(encoding="utf-8"))
+    cw = json.loads((TABLES / "stats_cweight.json").read_text(encoding="utf-8"))
+    keys = [
+        ("n20", r"All ($n{=}20$)"),
+        ("n16_real", r"Real ($n{=}16$)"),
+        ("bass_6", r"Real bass ($n{=}6$)"),
+        ("non_bass_real", r"Real non-bass ($n{=}10$)"),
+    ]
+    lines = [
+        r"\begin{table}[!t]",
+        r"\centering",
+        r"\caption{Matched-LUFS $\Delta L_{Aeq}$ versus $\Delta L_{Ceq}$ on the same frozen pairs. C-weighting uses the IEC 61672 analog prototype and the same uncalibrated offset as A. Positive: processor worse than flat gain.}",
+        r"\label{tab:cweight}",
+        r"\renewcommand{\arraystretch}{1.12}",
+        r"\begin{tabular}{l l r r r}",
+        r"\hline",
+        r"Set & Sys. & $\Delta L_{Aeq}$ & $\Delta L_{Ceq}$ & C$-$A \\",
+        r"\hline",
+    ]
+    for key, lab in keys:
+        a1, a2 = s1[key]["mean_dlaeq_db"], s2[key]["mean_dlaeq_db"]
+        c1, c2 = cw["s1"]["stats"][key]["mean_dlaeq_db"], cw["s2"]["stats"][key]["mean_dlaeq_db"]
+        lines.append(f"{lab} & S1 & {a1:+.2f} & {c1:+.2f} & {c1 - a1:+.2f} \\\\")
+        lines.append(f"{lab} & S2 & {a2:+.2f} & {c2:+.2f} & {c2 - a2:+.2f} \\\\")
+    lines += [r"\hline", r"\end{tabular}", r"\end{table}"]
+    (OUT.parent / "cweight_table.tex").write_text("\n".join(lines) + "\n", encoding="utf-8")
+
+    cw = json.loads((TABLES / "stats_cweight.json").read_text(encoding="utf-8"))
+    plines = [
+        r"\begin{table*}[!t]",
+        r"\centering",
+        r"\caption{Per-clip matched-LUFS $\Delta L_{Aeq}$ and $\Delta L_{Ceq}$ on the frozen set. Positive: processor worse than flat gain.}",
+        r"\label{tab:cweightclips}",
+        r"\renewcommand{\arraystretch}{1.08}",
+        r"\begin{tabular}{l l r r r r}",
+        r"\hline",
+        r"Clip & Type & $\Delta L_{Aeq}$ S1 & $\Delta L_{Ceq}$ S1 & $\Delta L_{Aeq}$ S2 & $\Delta L_{Ceq}$ S2 \\",
+        r"\hline",
+    ]
+    for clip in ORDER:
+        p = cw["per_clip"][clip]
+        plines.append(
+            f"{LABEL[clip]} & {GROUP[clip]} & {p['dlaeq_s1']:+.2f} & {p['dlceq_s1']:+.2f} "
+            f"& {p['dlaeq_s2']:+.2f} & {p['dlceq_s2']:+.2f} \\\\"
+        )
+    plines += [r"\hline", r"\end{tabular}", r"\end{table*}"]
+    (OUT.parent / "cweight_perclip_table.tex").write_text("\n".join(plines) + "\n", encoding="utf-8")
+
+
 def write_s1_s2_table(by: dict) -> dict:
     """Per-clip LaTeX: S1 and S2 ΔLAeq at matched LUFS (and the dual ΔLUFS)."""
     lines = [
@@ -378,7 +541,40 @@ def main() -> None:
     plot_ablation(_load(TABLES / "ablation.csv"))
     summary = write_table(by)
     s1s2 = write_s1_s2_table(by)
+    write_genre_table(by)
+    write_subset_table()
+    write_cweight_table()
+    write_inventory_table()
+    ext = TABLES / "comparison_extension_s1_s2.csv"
+    if ext.exists():
+        write_extension_table(ext)
     print({**summary, **s1s2})
+
+
+def write_extension_table(path: Path) -> None:
+    rows = _load(path)
+    s1 = [_f(r, "dlaeq_s1_matched_lufs") for r in rows]
+    s2 = [_f(r, "dlaeq_s2_matched_lufs") for r in rows]
+    lines = [
+        r"\begin{table}[!t]",
+        r"\centering",
+        r"\caption{Held-out extension clips, same frozen S1/S2 knobs. $\Delta L_{Aeq}$ at matched LUFS. The frozen 20-clip means are unchanged.}",
+        r"\label{tab:extension}",
+        r"\renewcommand{\arraystretch}{1.08}",
+        r"\begin{tabular}{l r r}",
+        r"\hline",
+        r"Clip & $\Delta L_{Aeq}$ S1 & $\Delta L_{Aeq}$ S2 \\",
+        r"\hline",
+    ]
+    for r, a, b in zip(rows, s1, s2):
+        lab = r["clip"].replace("_", r"\_")
+        lines.append(f"{lab} & {a:+.2f} & {b:+.2f} \\\\")
+    lines.append(r"\hline")
+    lines.append(
+        f"Mean ($n$={len(rows)}) & {float(np.mean(s1)):+.2f} & {float(np.mean(s2)):+.2f} \\\\"
+    )
+    lines += [r"\hline", r"\end{tabular}", r"\end{table}"]
+    (OUT.parent / "extension_table.tex").write_text("\n".join(lines) + "\n", encoding="utf-8")
 
 
 if __name__ == "__main__":

@@ -1,0 +1,44 @@
+{
+  "summary": {
+    "n_clips": 15,
+    "mean_dlaeq_at_matched_lufs": 1.004493677431689,
+    "mean_dlufs_at_matched_laeq": -1.0044936774316955,
+    "s1": {
+      "n_clips": 15,
+      "mean_dlaeq_at_matched_lufs": 1.004493677431689,
+      "mean_dlufs_at_matched_laeq": -1.0044936774316955
+    },
+    "note": "Negative mean_dlaeq_at_matched_lufs means that processor has a lower digital exposure proxy than frequency-flat gain at matched LUFS.",
+    "s2_knobs": {
+      "sub_atten_db": 0.0,
+      "harmonic_mix": 0.0,
+      "mid_target_dba": 72.0
+    },
+    "s2": {
+      "n_clips": 15,
+      "mean_dlaeq_at_matched_lufs": -0.15945846893563623,
+      "mean_dlufs_at_matched_laeq": 0.1594584689356721
+    },
+    "mean_dlaeq_aligned_at_matched_lufs": -0.15945846893563623,
+    "mean_dlufs_aligned_at_matched_laeq": 0.1594584689356721
+  },
+  "n_clips": 15,
+  "clips": [
+    "ext_183109",
+    "ext_242345",
+    "ext_256489",
+    "ext_264601",
+    "ext_316678",
+    "ext_325654",
+    "ext_332311",
+    "ext_345848",
+    "ext_391539",
+    "ext_401124",
+    "ext_413480",
+    "ext_416529",
+    "ext_439890",
+    "ext_476178",
+    "ext_508571"
+  ],
+  "folder": "C:\\Users\\mail2_tdwzs1y\\Desktop\\bhavya_cursor\\ES_Research_Paper\\audio_in\\extension"
+}

@@ -1,11 +1,11 @@
 # Progress audit versus the working roadmap
 
-**Date:** 16 Sep 2026  
+**Date:** 12 Oct 2026  
 **Roadmap:** `paper/working_roadmap.md`  
 **Background plan:** `paper/publishing_audit_and_roadmap.md` (13 Sep; still the venue/novelty strategy)  
 **Paper walkthrough:** `paper/walkthrough_notes.md` (explains the *old* S1-only draft)
 
-This file is the status snapshot after Phase F Step 14 (venue lock). It is not a substitute for the original publishing audit. Portal submit waits for the DAFx 2027 CFP.
+This file is the status snapshot after the VIT report expansion (Discussion + unused 20-clip tables + 15-clip extension). It is not a substitute for the original publishing audit. Portal submit waits for the DAFx 2027 CFP. Keep a separate 8-page DAFx cut; this 15-page IEEEtran draft is the college report.
 
 **How this file is kept:** after every stretch, update *this* file before calling the step done, then commit it with the code/results and push `main`.
 
@@ -26,7 +26,7 @@ S1 loses at matched LUFS (+1.17 dB); S2 reverses the sign (−0.27 dB, bootstrap
 
 S1 remains the failed heuristic on purpose. S2 knobs are frozen (`sub_atten_db=0`, `harmonic_mix=0`, `mid_target_dba=72`).
 
-**Paper vs data:** `main.tex` is version C. Claim vocabulary was searched; remaining hits are denials or calibrated-proxy disclaimers. Related work also cites US~11006215 and AES TD1008. First venue is **DAFx 2027** (Cremona, 24–27 Aug 2027). Compiled locally to `paper/main.pdf` (9 pages, IEEEtran + BibTeX, no undefined citations). No Overleaf login in this environment; Tectonic is XeTeX so Times (`ptm`) falls back to Latin Modern. Overleaf `pdflatex` will use Times. The old fpdf file `Frequency_Adaptive_Audio_Limiting.pdf` is removed so it cannot be submitted by mistake.
+**Paper vs data:** `main.tex` is version C plus a VIT-report expansion (Discussion, genre/subset/C tables, 15-clip extension). Frozen 20-clip S1/S2 means are unchanged. Extension S1 +1.00 dB, S2 −0.16 dB (`comparison_extension.csv`). First venue is still **DAFx 2027** (keep an 8-page cut). The old fpdf file is removed.
 
 **Git:** https://github.com/Bhavya-Shri/ES_Research_Paper.git — branch `main`. This file is updated after every stretch and pushed with that stretch.
 
@@ -165,6 +165,10 @@ Search method: web + Google Patents + AES public document pages + Scholar-style 
 
 **Looked at, not cited:** Cassidy ICASSP 2004 (loudness-model DRC); US~11268848 (later headset dosimetry, same family as US~6826515).
 
+### 2.10 VIT report expansion (12 Oct 2026)
+
+Unused 20-clip tables written from existing JSON/CSV (genre, subset Wilcoxon/CI/\(d\), A vs C). Discussion section added. Fifteen held-out Freesound previews in `audio_in/extension/` (gitignored). `python -m exposure_dsp extension` wrote `comparison_extension.csv` and did **not** overwrite `comparison.csv` (still 20 clips). Knobs frozen. Extension means: S1 **+1.00 dB**, S2 **−0.16 dB** (same signs as frozen). Some previews are shorter than 8 s.
+
 ### 2.9 Step 14 venue lock (16 Sep 2026)
 
 S2 reversed the sign. There is no listening test. §6 of the publishing audit says: aim a specialist conference with version C; do **not** wait for a coupler; do **not** aim TASLP / AES Journal.
@@ -243,7 +247,7 @@ Venue is locked. Do not retune mid target 72. After each stretch, update this fi
 
 ## 4. Explicitly later (blocked until Step 12)
 
-- Extra Freesound clips  
+- Extra Freesound clips (**report extension done**: 15 IDs, `comparison_extension.csv`; S1 +1.00 dB, S2 −0.16 dB; frozen 20-clip tables untouched)  
 - Headphone-EQ simulation  
 - MUSHRA / classmates  
 - HATS / IEC 60318-4  
@@ -273,8 +277,10 @@ Venue is locked. Do not retune mid target 72. After each stretch, update this fi
 python -m exposure_dsp checks          # includes weighting-ratio figure
 python -m exposure_dsp stats           # stats_s1.json + stats_s2.json from comparison.csv
 python -m exposure_dsp experiment      # full S1+S2 comparison (slow; ablation on by default)
-python paper/make_figures.py           # S1 + S2 grouped bars and perclip_table.tex
+python paper/make_figures.py           # S1 + S2 grouped bars and perclip/genre/subset/C tables
 python -m exposure_dsp cweight         # stats_cweight.json from frozen knobs + CSV gains
+python -m exposure_dsp.fetch_extension # audio_in/extension (gitignored)
+python -m exposure_dsp extension       # comparison_extension.csv; does NOT overwrite comparison.csv
 ```
 
 S1 freeze (do not overwrite as the source of truth): `results/frozen/draft-negative-v1/`.

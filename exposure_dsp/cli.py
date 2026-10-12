@@ -9,7 +9,7 @@ from pathlib import Path
 import numpy as np
 
 from .checks import run_all_checks
-from .experiment import load_corpus, run_experiment
+from .experiment import load_corpus, run_experiment, run_extension
 from .stats import interpret_s2_mean, load_comparison, run_cweight_stats, run_s1_stats, run_s2_stats
 from .io import load_mono, save_wav
 from .limiter import BroadbandExposureLimiter
@@ -45,6 +45,12 @@ def cmd_experiment(_: argparse.Namespace) -> None:
     payload = run_experiment()
     _print_json(payload["summary"])
     print(f"Wrote tables to {TABLES}")
+
+
+def cmd_extension(_: argparse.Namespace) -> None:
+    payload = run_extension()
+    _print_json(payload["summary"])
+    print(f"Wrote extension tables to {TABLES} (comparison.csv not overwritten)")
 
 
 def cmd_sweep(_: argparse.Namespace) -> None:
@@ -142,6 +148,10 @@ def main(argv: list[str] | None = None) -> None:
         help="IEC C-weighting ΔLCeq at frozen matched-LUFS gains (does not retune knobs)",
     ).set_defaults(func=cmd_cweight)
     sub.add_parser("corpus", help="List loaded clips").set_defaults(func=cmd_list_corpus)
+    sub.add_parser(
+        "extension",
+        help="S1+S2 on audio_in/extension only; writes comparison_extension.csv",
+    ).set_defaults(func=cmd_extension)
     sp = sub.add_parser("process", help="Process one wav: original / limiter / proposed")
     sp.add_argument("input")
     sp.add_argument("--fs", type=float, default=48000.0)
