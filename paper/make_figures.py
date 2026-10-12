@@ -317,7 +317,7 @@ def _fmt_pm(x: float) -> str:
 
 def write_inventory_table() -> None:
     lines = [
-        r"\begin{table}[!t]",
+        r"\begin{table}[!htbp]",
         r"\centering",
         r"\caption{Primary corpus. Real clips are Creative Commons Freesound recordings. Synthetics are built in \texttt{exposure\_dsp.signals}.}",
         r"\label{tab:inventory}",
@@ -357,7 +357,7 @@ def write_genre_table(by: dict) -> None:
         buckets[GROUP[clip]].append((dA1, dA2, dL1, dL2))
 
     lines = [
-        r"\begin{table}[!t]",
+        r"\begin{table}[!htbp]",
         r"\centering",
         r"\caption{Mean matched deltas by material type on the frozen 20-clip set. $\Delta L_{Aeq}$ is at matched LUFS; $\Delta$LUFS is at matched digital $L_{Aeq}$. Positive $\Delta L_{Aeq}$ means the processor has the higher exposure proxy.}",
         r"\label{tab:genre}",
@@ -399,7 +399,7 @@ def write_subset_table() -> None:
         ("non_bass_real", r"Real non-bass ($n{=}10$)"),
     ]
     lines = [
-        r"\begin{table}[!t]",
+        r"\begin{table}[!htbp]",
         r"\centering",
         r"\caption{Wilcoxon signed-rank and bootstrap 95\% CI on $\Delta L_{Aeq}$ at matched LUFS. Cohen's $d$ and rank-biserial $r$ use the same paired deltas. Positive mean: processor worse than flat gain.}",
         r"\label{tab:subset}",
@@ -434,7 +434,7 @@ def write_cweight_table() -> None:
         ("non_bass_real", r"Real non-bass ($n{=}10$)"),
     ]
     lines = [
-        r"\begin{table}[!t]",
+        r"\begin{table}[!htbp]",
         r"\centering",
         r"\caption{Matched-LUFS $\Delta L_{Aeq}$ versus $\Delta L_{Ceq}$ on the same frozen pairs. C-weighting uses the IEC 61672 analog prototype and the same uncalibrated offset as A. Positive: processor worse than flat gain.}",
         r"\label{tab:cweight}",
@@ -454,7 +454,7 @@ def write_cweight_table() -> None:
 
     cw = json.loads((TABLES / "stats_cweight.json").read_text(encoding="utf-8"))
     plines = [
-        r"\begin{table*}[!t]",
+        r"\begin{table}[!htbp]",
         r"\centering",
         r"\caption{Per-clip matched-LUFS $\Delta L_{Aeq}$ and $\Delta L_{Ceq}$ on the frozen set. Positive: processor worse than flat gain.}",
         r"\label{tab:cweightclips}",
@@ -470,14 +470,14 @@ def write_cweight_table() -> None:
             f"{LABEL[clip]} & {GROUP[clip]} & {p['dlaeq_s1']:+.2f} & {p['dlceq_s1']:+.2f} "
             f"& {p['dlaeq_s2']:+.2f} & {p['dlceq_s2']:+.2f} \\\\"
         )
-    plines += [r"\hline", r"\end{tabular}", r"\end{table*}"]
+    plines += [r"\hline", r"\end{tabular}", r"\end{table}"]
     (OUT.parent / "cweight_perclip_table.tex").write_text("\n".join(plines) + "\n", encoding="utf-8")
 
 
 def write_s1_s2_table(by: dict) -> dict:
     """Per-clip LaTeX: S1 and S2 ΔLAeq at matched LUFS (and the dual ΔLUFS)."""
     lines = [
-        r"\begin{table*}[!t]",
+        r"\begin{table}[!htbp]",
         r"\centering",
         r"\caption{Per-clip $\Delta L_{Aeq}$ at matched LUFS (processor minus flat gain; positive: higher digital exposure proxy) and the dual $\Delta$LUFS at matched $L_{Aeq}$. S1 is the bass-first heuristic; S2 is the metric-aligned mid cut.}",
         r"\label{tab:perclip}",
@@ -514,7 +514,7 @@ def write_s1_s2_table(by: dict) -> dict:
     )
     lines.append(r"\hline")
     lines.append(r"\end{tabular}")
-    lines.append(r"\end{table*}")
+    lines.append(r"\end{table}")
     (OUT.parent / "perclip_table.tex").write_text("\n".join(lines) + "\n", encoding="utf-8")
     return {
         "mean_dlaeq_s1": float(np.mean(s1_a)),
@@ -556,7 +556,7 @@ def write_extension_table(path: Path) -> None:
     s1 = [_f(r, "dlaeq_s1_matched_lufs") for r in rows]
     s2 = [_f(r, "dlaeq_s2_matched_lufs") for r in rows]
     lines = [
-        r"\begin{table}[!t]",
+        r"\begin{table}[!htbp]",
         r"\centering",
         r"\caption{Held-out extension clips, same frozen S1/S2 knobs. $\Delta L_{Aeq}$ at matched LUFS. The frozen 20-clip means are unchanged.}",
         r"\label{tab:extension}",

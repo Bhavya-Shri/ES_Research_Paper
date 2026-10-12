@@ -1,4 +1,4 @@
-\documentclass[journal]{IEEEtran}
+\documentclass[12pt,journal,onecolumn]{IEEEtran}
 
 \usepackage{cite}
 \usepackage{amsmath,amssymb,amsfonts}
@@ -8,6 +8,7 @@
 \usepackage{tikz}
 \usetikzlibrary{arrows.meta,positioning}
 \usepackage{url}
+\usepackage[section]{placeins}
 
 % Overleaf Menu is pdfLaTeX; this keeps latexmk on the same engine.
 % !TeX program = pdflatex
@@ -21,7 +22,7 @@
 \author{Yashwini~Krishna~Murthy and Bhavya~Shri%
 \thanks{The authors are with the Department of Computer Science and Engineering, Vellore Institute of Technology, Chennai, India (e-mail: yashwini.krishna2024@vitstudent.ac.in).}}
 
-\markboth{DAFx 2027 working draft}%
+\markboth{VIT Chennai college report}%
 {Murthy and Shri: Metric-Aligned Frequency Allocation for Personal-Audio Dose Limiting}
 
 \maketitle
@@ -75,12 +76,12 @@ When a harmonic complex loses its fundamental, listeners can still hear a pitch 
 
 Table~\ref{tab:gap} summarises the pieces. Frequency-selective tools for dose, hearing protection, and loudness already exist. What is scarce is a matched LUFS versus digital $L_{Aeq}$ test of a bass-first heuristic \emph{and} a $w_A$-aligned configuration against flat gain on music. That comparison is what this study provides. It does not introduce a new limiter architecture.
 
-\begin{table*}[!t]
+\begin{table}[!htbp]
 \caption{Related methods versus this study. ``Matched test'' here means equal LUFS or equal digital $L_{Aeq}$ on music, for a frequency heuristic versus flat gain.}
 \label{tab:gap}
 \centering
 \renewcommand{\arraystretch}{1.12}
-\begin{tabular}{>{\raggedright\arraybackslash}p{0.28\textwidth} c c c c c}
+\begin{tabular}{>{\raggedright\arraybackslash}p{0.32\linewidth} c c c c c}
 \hline
 Approach & Exposure & Freq.\ sel. & Loudness aim & Bass fill & Matched test \\
 \hline
@@ -94,7 +95,7 @@ Virtual bass \cite{Gan2001} & No & Yes & Bass only & Yes & No \\
 This work (S0/S1/S2) & Proxy & Yes & LUFS & S1 only & Yes \\
 \hline
 \end{tabular}
-\end{table*}
+\end{table}
 
 \section{Proposed Method}
 \label{sec:method}
@@ -114,9 +115,9 @@ This is a design objective, not a solved optimisation. We do not run a numerical
 
 Fig.~\ref{fig:wak} plots IEC A-weighting and BS.1770 K-weighting, and their ratio $W_A/W_K$, from 20\,Hz to 20\,kHz. Near 40\,Hz, A-weighting is about $-35$\,dB while digital K-weighting is only a few dB down. A cut there spends loudness (LUFS sees K) that an A-weighted dose meter barely records. Near 1--4\,kHz the two weights are closer, and A is large, so a mid cut should move $L_{Aeq}$ more than a bass cut of the same loudness cost. That ratio is the design rule. S1 ignores it; S2 follows it.
 
-\begin{figure}[!t]
+\begin{figure}[!htbp]
 \centering
-\includegraphics[width=\columnwidth]{weighting_ratio.png}
+\includegraphics[width=0.92\linewidth]{weighting_ratio.png}
 \caption{IEC A-weighting and BS.1770 K-weighting on the same axes, with the ratio $W_A/W_K$ in dB. Vertical markers: 40\,Hz, 300\,Hz, 1\,kHz, 4\,kHz. Near 40\,Hz, A-weighting is about $-35$\,dB while K-weighting is only a few dB down, so a bass cut spends loudness that the dose meter barely sees.}
 \label{fig:wak}
 \end{figure}
@@ -129,8 +130,9 @@ y[n] = y_{\mathrm{L}}[n] + y_{\mathrm{M}}[n] + y_{\mathrm{H}}[n].
 \end{equation}
 The low band carries sub-bass, the mid band most speech and musical energy, and the high band many transients. Those cutoffs were chosen for the prototype. They were not searched over listeners.
 
-\begin{figure*}[!t]
+\begin{figure}[!htbp]
 \centering
+\resizebox{\linewidth}{!}{%
 \begin{tikzpicture}[
   font=\footnotesize,
   box/.style={draw, align=center, inner sep=3.4pt, minimum height=9mm, rounded corners=1pt},
@@ -153,10 +155,11 @@ The low band carries sub-bass, the mid band most speech and musical energy, and 
 \draw[arr] (hi.east) -- ++(4mm,0) |- (sum.west);
 \draw[arr] (sum) -- (pk);
 \draw[arr] (pk) -- (y);
-\end{tikzpicture}
+\end{tikzpicture}%
+}
 \caption{Three-band processor shared by S1 and S2. The crossover is complementary. Per-band processing is a fixed heuristic, not a numerical optimiser. S1 uses a $-12$\,dB low shelf and harmonic fill; S2 sets both to zero and lowers the mid target.}
 \label{fig:block}
-\end{figure*}
+\end{figure}
 
 \subsection{Low band}
 
@@ -192,23 +195,23 @@ with $\gamma=0.5$ and $T_{\mathrm{H}}=-12$\,dBFS. This is transient-aware gain c
 
 Independent Butterworth low/band/high splits are not magnitude-complementary and can boost the sum near the cutoffs. The processor uses cascaded fourth-order Linkwitz--Riley sections \cite{Linkwitz1976}, with allpass compensation of the low path at the upper split, so the three bands sum to an allpass. Fig.~\ref{fig:xo} compares reconstruction with the older independent-Butterworth bank: the Linkwitz--Riley sum sits at 0\,dB, while the older bank peaked at the 300\,Hz and 4\,kHz boundaries and raised a quiet 440\,Hz tone by 19.7\%.
 
-\begin{figure}[!t]
+\begin{figure}[!htbp]
 \centering
-\includegraphics[width=\columnwidth]{crossover_reconstruction.png}
+\includegraphics[width=0.88\linewidth]{crossover_reconstruction.png}
 \caption{Crossover reconstruction. Linkwitz--Riley 3-way sum (this work) versus independent Butterworth splits used in an earlier draft. Dashed lines mark $\pm 0.5$\,dB.}
 \label{fig:xo}
 \end{figure}
 
-\begin{figure}[!t]
+\begin{figure}[!htbp]
 \centering
-\includegraphics[width=\columnwidth]{harmonic_coverage.png}
+\includegraphics[width=0.88\linewidth]{harmonic_coverage.png}
 \caption{Low-band output spectra for 40, 50, 60, and 80\,Hz tones after the S1 $-12$\,dB shelf and 80--400\,Hz harmonic path. Second and third harmonics are present for a 40\,Hz fundamental.}
 \label{fig:harm}
 \end{figure}
 
-\begin{figure}[!t]
+\begin{figure}[!htbp]
 \centering
-\includegraphics[width=\columnwidth]{aweighting_response.png}
+\includegraphics[width=0.88\linewidth]{aweighting_response.png}
 \caption{Digital A-weighting IIR (normalised at 1\,kHz) versus the IEC analytic curve. The mid-band detector uses 300\,Hz--4\,kHz. A-weighting at 40\,Hz is about $-35$\,dB, which is the mechanism behind the S1 result.}
 \label{fig:aw}
 \end{figure}
@@ -231,7 +234,7 @@ The per-clip comparison, in outline, is:
 \item Repeat for every clip. Do not retune Table~\ref{tab:params} after inspecting the mean.
 \end{enumerate}
 
-\begin{table}[!t]
+\begin{table}[!htbp]
 \caption{Processor parameters. S2 is a configuration of S1, not a second architecture.}
 \label{tab:params}
 \centering
@@ -319,12 +322,12 @@ No formal MUSHRA or PEAQ test was run, and no listener scores are reported. A la
 
 Fig.~\ref{fig:h2} plots, for each clip, S1's digital $L_{Aeq}$ proxy minus S0 at matched LUFS. Positive bars mean S1 is \emph{worse} on the quantity it was supposed to reduce.
 
-\begin{figure*}[!t]
+\begin{figure}[!htbp]
 \centering
-\includegraphics[width=\textwidth]{matched_loudness_delta.png}
+\includegraphics[width=\linewidth]{matched_loudness_delta.png}
 \caption{Digital $L_{Aeq}$ proxy at matched LUFS: S1 minus frequency-flat gain. Positive values mean S1 has the higher exposure proxy. Bass loops (red) drive the mean; speech, vocals, and short transients sit near zero.}
 \label{fig:h2}
-\end{figure*}
+\end{figure}
 
 The mean over 20 clips is $+1.17$\,dB (median $+0.61$\,dB). On the 16 Freesound recordings alone the mean is $+0.92$\,dB. Twelve clips are more than 0.05\,dB worse for S1, six are within 0.05\,dB, and two are slightly better (a female vocal at $-0.07$\,dB and mixed command speech at $-0.12$\,dB). \textbf{H2-S1 is not supported.}
 
@@ -339,9 +342,9 @@ A Wilcoxon signed-rank test on the 20 S1 $\Delta L_{Aeq}$ values rejects a zero 
 
 Fig.~\ref{fig:mismatch} plots, for the S1 output versus the original, LUFS drop against $L_{Aeq}$ drop. If the two meters agreed, points would lie on the dashed line. Bass clips lie far to the right: LUFS falls by 2--5\,dB while the A-weighted proxy barely moves. Speech and cymbals lie near the origin.
 
-\begin{figure}[!t]
+\begin{figure}[!htbp]
 \centering
-\includegraphics[width=\columnwidth]{metric_mismatch.png}
+\includegraphics[width=0.88\linewidth]{metric_mismatch.png}
 \caption{S1 versus the original clip. Bass-heavy material loses loudness (LUFS) without a matching drop in the A-weighted proxy, because A-weighting already ignores energy near 40\,Hz.}
 \label{fig:mismatch}
 \end{figure}
@@ -354,12 +357,12 @@ This is not a crossover bug. Reconstruction is flat (Fig.~\ref{fig:xo}), harmoni
 
 Fig.~\ref{fig:s1s2} plots S1$-$S0 and S2$-$S0 on the same clips at matched LUFS. S2 spends attenuation in the mid band, where $w_A$ is large.
 
-\begin{figure*}[!t]
+\begin{figure}[!htbp]
 \centering
-\includegraphics[width=\textwidth]{matched_loudness_s1_s2.png}
+\includegraphics[width=\linewidth]{matched_loudness_s1_s2.png}
 \caption{Digital $L_{Aeq}$ proxy at matched LUFS: S1 and S2 minus frequency-flat gain. S1 (red) is mostly positive; S2 (green) is mostly negative or tied. The S2 mean is modest.}
 \label{fig:s1s2}
-\end{figure*}
+\end{figure}
 
 The S2 mean over 20 clips is $-0.27$\,dB (median $-0.09$\,dB). Eleven clips are more than 0.05\,dB better than S0, eight are within 0.05\,dB, and one (a snare/crash) is slightly worse. The bootstrap 95\% CI is $[-0.45,\,-0.11]$\,dB; two-sided Wilcoxon $p=0.001$ (rank-biserial $r=-0.78$). On the 16 real recordings the mean is $-0.30$\,dB (CI $[-0.52,\,-0.11]$; $p=0.004$). The six real bass loops sit at $-0.57$\,dB (CI $[-0.88,\,-0.26]$). \textbf{H2-S2 is supported.} The reversal is a sign flip on a small margin, not a large dose reduction.
 
@@ -374,9 +377,9 @@ The same matched-LUFS pairs were re-scored with $L_{Ceq}$ (same RMS-plus-offset 
 \input{cweight_table}
 \input{cweight_perclip_table}
 
-\begin{figure}[!t]
+\begin{figure}[!htbp]
 \centering
-\includegraphics[width=\columnwidth]{cweighting_response.png}
+\includegraphics[width=0.88\linewidth]{cweighting_response.png}
 \caption{Digital C-weighting IIR versus the IEC analytic curve. Near 40\,Hz, C is a few dB down while A is about $-35$\,dB, which is why S1 and S2 swap sign between $L_{Aeq}$ and $L_{Ceq}$. This remains a digital proxy, not a workplace meter.}
 \label{fig:cw}
 \end{figure}
@@ -385,12 +388,12 @@ The same matched-LUFS pairs were re-scored with $L_{Ceq}$ (same RMS-plus-offset 
 
 Fig.~\ref{fig:h1} is the dual view for S1. At equal digital $L_{Aeq}$, S1 is quieter by 1.17\,dB LUFS on average---exactly the opposite sign of Fig.~\ref{fig:h2}, as expected for a frequency-flat baseline. \textbf{H1-S1 is not supported as a loudness-preservation claim.} At the same A-weighted proxy, turning the whole signal down keeps more LUFS than cutting sub-bass.
 
-\begin{figure*}[!t]
+\begin{figure}[!htbp]
 \centering
-\includegraphics[width=\textwidth]{matched_exposure_lsd.png}
+\includegraphics[width=\linewidth]{matched_exposure_lsd.png}
 \caption{Left: LUFS at matched digital $L_{Aeq}$ proxy for S1 versus S0. S1 is quieter on bass-heavy clips. Right: log-spectral distance versus the original at the same match. LSD is an objective distance, not a listening-test score.}
 \label{fig:h1}
-\end{figure*}
+\end{figure}
 
 Mean LSD is 0.49\,dB for S1 and 0.40\,dB for S0. On many bass clips S0 barely moves, so its LSD is small. On clips where the mid-band compressor actually works (female vocal, command speech), flat gain of the same $L_{Aeq}$ drop produces a larger spectral shift than the band-limited compressor (LSD 1.40 and 1.69\,dB versus 0.57 and 0.67\,dB). Spectral distance is therefore mixed: S1 is not uniformly closer to the original, but it avoids the largest broadband shifts. Without a listening test that pattern should not be read as a preference.
 
@@ -398,9 +401,9 @@ Mean LSD is 0.49\,dB for S1 and 0.40\,dB for S0. On many bass clips S0 barely mo
 
 Fig.~\ref{fig:abl} shows mean change versus the original when S1 bands are enabled one at a time. This ablation was not repeated for S2. Crossover-only reconstruction does not change level. Mid-only compression moves $L_{Aeq}$ on speech and vocals and does little on bass. Adding the low band is what drops LUFS. Adding the high band changes almost nothing on this corpus; transients in the test set rarely exceeded the high-band threshold. The full S1 system tracks the mid+low curve. The exposure/loudness disagreement is produced by the low shelf, which is also the block that was supposed to be the advantage.
 
-\begin{figure}[!t]
+\begin{figure}[!htbp]
 \centering
-\includegraphics[width=\columnwidth]{ablation_delta.png}
+\includegraphics[width=0.88\linewidth]{ablation_delta.png}
 \caption{S1 ablation, mean over 20 clips, relative to the unprocessed signal. ``Default DRC'' is a full-band A-weighted compressor at the default target, not the LUFS-matched flat gain of Fig.~\ref{fig:h2}. The low band dominates the LUFS drop. The high band is nearly unused on this material. S2 was not ablated.}
 \label{fig:abl}
 \end{figure}
@@ -408,6 +411,25 @@ Fig.~\ref{fig:abl} shows mean change versus the original when S1 bands are enabl
 \subsection{Mid-band operating point}
 
 A target/ratio sweep on a six-tone-plus-noise debug signal (Table~\ref{tab:sweep}) shows the expected trade-off: a lower mid target reduces the proxy and raises LSD. That sweep characterises the compressor. It is not the 20-clip result and it is not a listening-test score. The S2 target of 72 on the corpus was frozen independently of this table.
+
+\begin{table}[!htbp]
+\caption{Mid-band target/ratio sweep on a synthetic six-tone-plus-noise signal. $\Delta L_{Aeq}$ is versus the unprocessed debug clip. LSD is not a listening-test score.}
+\label{tab:sweep}
+\centering
+\renewcommand{\arraystretch}{1.1}
+\begin{tabular}{c c r r r}
+\hline
+Target & Ratio & $L_{Aeq}$ proxy & $\Delta L_{Aeq}$ (dB) & LSD (dB) \\
+\hline
+82 & 2:1 & 77.77 & $-0.10$ & 0.82 \\
+80 & 3:1 & 77.77 & $-0.10$ & 0.82 \\
+78 & 4:1 & 77.04 & $-0.83$ & 0.88 \\
+76 & 4:1 & 75.92 & $-1.96$ & 1.16 \\
+74 & 6:1 & 74.57 & $-3.30$ & 1.65 \\
+72 & 8:1 & 73.34 & $-4.53$ & 2.20 \\
+\hline
+\end{tabular}
+\end{table}
 
 \subsection{Held-out extension clips}
 \label{sec:extension}
@@ -430,25 +452,6 @@ C-weighting is the same comparison under a different meter, not a better safety 
 S2 is a configuration of S1. The architecture, crossover, and high-band path are unchanged. What changed is where attenuation is spent. That is why the paper does not claim a new limiter. The design rule is: if the constraint is an A-weighted digital proxy and the comparison is BS.1770 loudness, spend the cut where $w_A(f)$ is large. Equal-loudness contours motivated the opposite heuristic; they do not define the operational meters.
 
 The dual match is not a second experiment. Because S0 is frequency-flat, $\Delta$LUFS at matched $L_{Aeq}$ is the opposite sign of $\Delta L_{Aeq}$ at matched LUFS, to within a few hundredths of a dB. Reporting both is a check, not extra evidence.
-
-\begin{table}[!t]
-\caption{Mid-band target/ratio sweep on a synthetic six-tone-plus-noise signal. $\Delta L_{Aeq}$ is versus the unprocessed debug clip. LSD is not a listening-test score.}
-\label{tab:sweep}
-\centering
-\renewcommand{\arraystretch}{1.1}
-\begin{tabular}{c c r r r}
-\hline
-Target & Ratio & $L_{Aeq}$ proxy & $\Delta L_{Aeq}$ (dB) & LSD (dB) \\
-\hline
-82 & 2:1 & 77.77 & $-0.10$ & 0.82 \\
-80 & 3:1 & 77.77 & $-0.10$ & 0.82 \\
-78 & 4:1 & 77.04 & $-0.83$ & 0.88 \\
-76 & 4:1 & 75.92 & $-1.96$ & 1.16 \\
-74 & 6:1 & 74.57 & $-3.30$ & 1.65 \\
-72 & 8:1 & 73.34 & $-4.53$ & 2.20 \\
-\hline
-\end{tabular}
-\end{table}
 
 \section{Limitations}
 \label{sec:limits}
